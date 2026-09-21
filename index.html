@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soaring Eagle Productions | Business Verification</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col justify-between antialiased">
+
+    <!-- Header -->
+    <header class="w-full bg-white border-b border-slate-200 py-6 px-8 shadow-sm">
+        <div class="max-w-3xl mx-auto flex items-center justify-between">
+            <div>
+                <h1 class="text-xl font-bold text-slate-900 tracking-tight">Soaring Eagle Productions</h1>
+                <p class="text-xs text-slate-500 uppercase tracking-wider font-medium">Official Business Verification Portal</p>
+            </div>
+            <div class="text-xs bg-slate-100 text-slate-600 px-3 py-1 rounded-full font-medium border border-slate-200">
+                Verified Business Entity
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="w-full max-w-3xl mx-auto px-8 py-16 flex-grow">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 md:p-12">
+            
+            <!-- Company Overview -->
+            <div class="mb-10">
+                <h2 class="text-2xl font-bold text-slate-900 mb-3">Company Information</h2>
+                <p class="text-slate-600 text-base leading-relaxed">
+                    Soaring Eagle Productions is a premier mobile app development company specializing in high-performance iOS, Android, and cross-platform digital solutions.
+                </p>
+            </div>
+
+            <!-- Business Details Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t border-slate-100">
+                
+                <!-- Email Contact -->
+                <div class="flex items-start space-x-4">
+                    <div class="p-2.5 bg-indigo-50 text-indigo-600 rounded-xl">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 block mb-1">Official Contact Email</span>
+                        <a href="mailto:soaringeagle@schroed.net" class="text-indigo-600 font-medium hover:underline text-sm md:text-base">
+                            soaringeagle@schroed.net
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Location / Address -->
+                <div class="flex items-start space-x-4">
+                    <div class="p-2.5 bg-indigo-50 text-indigo-600 rounded-xl">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 block mb-1">Business Address</span>
+                        <p class="text-slate-700 text-sm md:text-base font-medium">
+                            2835 Westminster Way<br>Springboro, OH USA
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Business Hours -->
+                <div class="flex items-start space-x-4 md:col-span-2 pt-4">
+                    <div class="p-2.5 bg-indigo-50 text-indigo-600 rounded-xl">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 block mb-1">Business Hours</span>
+                        <p class="text-slate-700 text-sm md:text-base font-medium">
+                            Monday – Friday: 8:00 AM – 5:00 PM (EST)
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="w-full bg-white border-t border-slate-200 py-6 px-8 text-center text-xs text-slate-500">
+        <p>&copy; <span id="current-year"></span> Soaring Eagle Productions. All rights reserved. • Inquiries: <a href="mailto:soaringeagle@schroed.net" class="text-indigo-600 hover:underline">soaringeagle@schroed.net</a></p>
+    </footer>
+
+    <script>
+        // Set current year dynamically
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+    </script>
+</body>
+</html>
