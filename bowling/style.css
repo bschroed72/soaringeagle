@@ -1,0 +1,406 @@
+body {
+  margin: 45px 0 0 0;
+  font-family: Arial, sans-serif;
+  background: #000;
+  color: #fff;
+}
+
+/* Global Top Navigation */
+.floating-container-top-left {
+  position: fixed;
+  top: 5px;
+  left: 0;
+  z-index: 1000;
+}
+
+button.menuButton {
+  background: #222;
+  color: #fff;
+  border: 1px solid #555;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 12px;
+  cursor: pointer;
+  font-weight: bold;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+}
+
+button.menuButton:hover {
+  background: #333;
+  border-color: #777;
+}
+
+button.functionButton {
+  cursor: pointer;
+  height: 3.6em;
+  background: #ef4444;
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 12px;
+  margin: 5px;
+  padding: 0 14px;
+  border: none;
+  border-radius: 6px;
+  display: none;
+  transition:
+    background 0.15s ease,
+    transform 0.05s ease;
+}
+
+button.functionButton:hover {
+  background: #dc2626;
+}
+
+button.functionButton:active {
+  transform: translateY(1px);
+}
+
+.textarea-message {
+  font-family: inherit;
+  width: 255px;
+  font-size: 14px;
+  color: cyan;
+  background-color: #333;
+  border: 0;
+  text-align: center;
+  position: fixed;
+  top: 2px;
+  left: 50px;
+  resize: none;
+}
+
+/* Team Containers */
+.team-wrapper {
+  border-top: 5px dashed #666;
+}
+
+/* Score Table */
+table.scoreTable {
+  border-collapse: collapse;
+  background: #eee;
+  color: #000;
+  font-size: 13px;
+}
+
+table.scoreTable th,
+table.scoreTable td {
+  border: 1px solid #333;
+  background-color: transparent;
+}
+
+th.frame {
+  background: #aaa !important;
+}
+
+tr {
+  background-color: transparent;
+  transition: background-color 1s ease-in-out;
+}
+
+tr.selected {
+  background-color: aqua;
+}
+
+.input-playername {
+  font-family: inherit;
+  width: 110px;
+  font-size: 14px;
+  color: black;
+  background-color: transparent;
+  border: 0;
+  outline: none;
+}
+
+/* Distinct visual style when actively editing a bowler's name */
+.input-playername:focus {
+  border-color: #2563eb; /* Bright blue accent border */
+  box-shadow: 0 0 5px rgba(37, 99, 235, 0.5);
+}
+
+td.playerNote {
+  text-align: right;
+  padding-right: 4px;
+}
+
+td.roll {
+  font-weight: bold;
+  padding: 2px;
+  min-width: 10px;
+  height: 1.2em;
+  text-align: center;
+}
+
+/* Ensure Split Styling Always Takes Precedence */
+table.scoreTable td.roll.split {
+  background-color: #ffb6c1 !important; /* Classic Pink */
+  color: #000;
+}
+
+td.frameTotal {
+  font-weight: bold;
+  height: 1.2em;
+  border-bottom: 3px solid #333;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+}
+
+td.frameTotal.isvisible {
+  opacity: 1;
+}
+
+/* Score Input Keypad */
+table.scoreButtonTable {
+  border-collapse: collapse;
+}
+
+td.scoreButtonCell {
+  border: none;
+  padding: 5px 15px 5px 0;
+}
+
+button.scoreButton {
+  cursor: pointer;
+  height: 3em;
+  width: 3em;
+  background: #2563eb;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 13px;
+  transition:
+    background 0.15s ease,
+    transform 0.05s ease;
+}
+
+button.scoreButton:hover:not(:disabled) {
+  background: #1d4ed8;
+}
+
+button.scoreButton:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+button.scoreButton:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  background-color: #475569;
+}
+
+/* Flying Overlay Element */
+.flyer-symbol {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  font-family: Arial, sans-serif;
+  font-weight: 900;
+  font-size: 42px;
+  line-height: 1;
+  text-align: center;
+  transform-origin: center center;
+}
+
+.flyer-symbol.strike {
+  color: #fbbf24;
+  text-shadow:
+    0 0 20px #f59e0b,
+    0 0 40px #d97706,
+    0 4px 8px rgba(0, 0, 0, 0.9);
+}
+
+.flyer-symbol.spare {
+  color: #38bdf8;
+  text-shadow:
+    0 0 20px #0284c7,
+    0 0 40px #0369a1,
+    0 4px 8px rgba(0, 0, 0, 0.9);
+}
+
+/* Landing Impact Pop on Cell */
+@keyframes cellImpact {
+  0% {
+    transform: scale(1.4);
+    background-color: #f59e0b;
+    color: #000;
+  }
+  100% {
+    transform: scale(1);
+    color: #000;
+  }
+}
+
+td.roll.anim-impact {
+  animation: cellImpact 0.35s ease-out;
+}
+
+/* Match Scores Modal */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 2000;
+  display: none;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.modal-backdrop.active {
+  display: flex;
+}
+
+.modal-content {
+  background: #1e293b;
+  color: #f8fafc;
+  border: 1px solid #475569;
+  border-radius: 8px;
+  padding: 16px;
+  width: 380px;
+  max-width: 90vw;
+  margin: 45px 0 0 10px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8);
+  font-family: inherit;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #334155;
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.modal-close:hover {
+  color: #fff;
+}
+
+.team-score-card {
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.team-score-header {
+  font-size: 13px;
+  font-weight: bold;
+  color: #38bdf8;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.team-score-current {
+  color: #f59e0b;
+}
+
+.score-field-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 6px;
+}
+
+.score-field-row label {
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.score-field-row input {
+  width: 85px;
+  padding: 4px 6px;
+  border-radius: 4px;
+  border: 1px solid #475569;
+  background: #1e293b;
+  color: #fff;
+  font-size: 13px;
+  font-weight: bold;
+  text-align: right;
+}
+
+.modal-btn {
+  cursor: pointer;
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: bold;
+  transition: background 0.15s ease;
+}
+
+.modal-btn:hover {
+  background: #1d4ed8;
+}
+
+.modal-btn.secondary {
+  background: #475569;
+}
+
+.modal-btn.secondary:hover {
+  background: #334155;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 14px;
+  border-top: 1px solid #334155;
+  padding-top: 10px;
+}
+
+/* Editable Team Title in Modal */
+.input-team-title {
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: bold;
+  color: #38bdf8;
+  background: transparent;
+  border: none;
+  border-bottom: 1px dashed #475569;
+  padding: 2px 4px;
+  width: 140px;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.input-team-title:focus {
+  border-bottom-color: #38bdf8;
+  background-color: #1e293b;
+}
+
+.input-team-title::placeholder {
+  color: #64748b;
+  font-weight: normal;
+}
+
+/* Hide spin buttons for number inputs across browsers */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}

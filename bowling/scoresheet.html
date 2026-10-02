@@ -1,0 +1,1005 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Bowling Scoresheet</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <!-- Top Global Menu Controls -->
+    <div class="floating-container-top-left">
+      <button class="menuButton" onclick="toggleFunctionButtons()">...</button>
+      <button class="functionButton" onclick="clearScores()">
+        Clear All Scores
+      </button>
+      <button class="functionButton" onclick="openMatchScoreModal()">
+        Match Scores
+      </button>
+      <button class="functionButton" onclick="addTeam()">+ Add Team</button>
+      <button class="functionButton" onclick="promptRemoveTeam()">
+        - Remove Team
+      </button>
+      <button class="functionButton" onclick="promptAddPlayer()">
+        + Add Bowler
+      </button>
+      <button class="functionButton" onclick="promptRemovePlayer()">
+        - Remove Bowler
+      </button>
+    </div>
+
+    <textarea rows="2" class="textarea-message" id="TopMessage"></textarea>
+
+    <!-- Dynamic Teams Master Container -->
+    <div id="teamsContainer"></div>
+
+<!-- Match Scores Modal (Dynamic Table Entry) -->
+    <div id="matchScoreModal" class="modal-backdrop">
+      <div class="modal-content" style="width: 200px;">
+        <div class="modal-header">
+          <span>Match Score Entry</span>
+          <button class="modal-close" onclick="closeMatchScoreModal()">
+            &times;
+          </button>
+        </div>
+
+        <!-- Dynamic Table with Editable Team Headers -->
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 8px;">
+          <thead>
+            <tr>
+              <th style="padding: 4px; text-align: left;">
+                <input
+                  type="text"
+                  id="nameTeam0"
+                  class="input-team-title"
+                  placeholder="Team 1 Name"
+                  style="width: 100%; box-sizing: border-box;"
+                />
+              </th>
+              <th style="padding: 4px; text-align: left;">
+                <input
+                  type="text"
+                  id="nameTeam1"
+                  class="input-team-title"
+                  placeholder="Team 2 Name"
+                  style="width: 100%; box-sizing: border-box;"
+                />
+              </th>
+              <th style="width: 30px;"></th>
+            </tr>
+          </thead>
+          <tbody id="matchScoreRowsContainer">
+            <!-- Dynamic rows inserted here -->
+          </tbody>
+        </table>
+
+        <button class="modal-btn secondary" onclick="addMatchScoreRow()" style="width: 100%; margin-bottom: 12px;">
+          + Add Row
+        </button>
+
+        <input
+          type="text"
+          id="note"
+          class="input-team-title"
+          placeholder="Note"
+          style="width: 100%; box-sizing: border-box; margin-bottom: 12px;"
+        />
+
+        <div class="modal-footer">
+          <button class="modal-btn secondary" onclick="closeMatchScoreModal()">
+            Cancel
+          </button>
+          <button class="modal-btn" onclick="saveMatchScores()">
+            Apply & Update
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const ROLLS = 21;
+      const FRAMES = 10;
+
+      let teams = [];
+
+      function initApp() {
+        const urlParams = new URLSearchParams(window.location.search);
+
+        const teamCountParam = parseInt(urlParams.get("teams"), 10);
+        const totalTeams =
+          Number.isFinite(teamCountParam) && teamCountParam > 0
+            ? teamCountParam
+            : 1;
+
+        teams = [];
+        for (let t = 0; t < totalTeams; t++) {
+          const bowlerCountParam = parseInt(urlParams.get(`team${t}count`), 10);
+          const bowlerCount =
+            Number.isFinite(bowlerCountParam) && bowlerCountParam > 0
+              ? bowlerCountParam
+              : 1;
+
+          const teamObj = createNewTeam(`Team ${t + 1}`);
+          for (let b = 0; b < bowlerCount; b++) {
+            teamObj.players.push(newPlayer());
+          }
+          teams.push(teamObj);
+        }
+
+        fullRebuild();
+      }
+
+      function createNewTeam(name) {
+        return {
+          players: [],
+          selectedIndex: 0,
+          tbody: null,
+        };
+      }
+
+      function newPlayer() {
+        return { name: "", rolls: Array(ROLLS).fill(""), splits: new Set() };
+      }
+
+      function getPlayer(teamIndex) {
+        const t = teams[teamIndex];
+        return t ? t.players[t.selectedIndex] || null : null;
+      }
+
+      function rollPoints(roll) {
+        return isStrike(roll) ? 10 : parseInt(roll, 10);
+      }
+
+      function isStrike(roll) {
+        return roll === "X";
+      }
+
+      function isSpare(roll) {
+        return roll === "/";
+      }
+
+      function toggleFunctionButtons() {
+        document.querySelectorAll(".functionButton").forEach((button) => {
+          button.style.display =
+            button.style.display === "block" ? "none" : "block";
+        });
+      }
+
+      function addTeam() {
+        const nextNumber = teams.length + 1;
+        const team = createNewTeam(`Team ${nextNumber}`);
+        team.players.push(newPlayer());
+        teams.push(team);
+        fullRebuild();
+      }
+
+      function promptRemoveTeam() {
+        toggleFunctionButtons();
+        if (teams.length <= 1) {
+          alert("At least one team must remain active.");
+          return;
+        }
+        const teamIndex = promptTeamIndex("Remove Team");
+        if (teamIndex !== null) {
+          removeTeam(teamIndex);
+        }
+      }
+
+      function removeTeam(teamIndex) {
+        if (teams.length <= 1) {
+          alert("At least one team must remain active.");
+          return;
+        }
+        const team = teams[teamIndex];
+        if (!team) return;
+
+        const bowlerNames = team.players
+          .map((p, idx) => p.name.trim() || `Bowler ${idx + 1}`)
+          .join(", ");
+
+        const msg = bowlerNames
+          ? `Are you sure you want to remove Team ${teamIndex} (${bowlerNames})?`
+          : `Are you sure you want to remove Team ${teamIndex}?`;
+
+        if (confirm(msg)) {
+          teams.splice(teamIndex, 1);
+          fullRebuild();
+        }
+      }
+
+      function promptTeamIndex(actionName) {
+        if (teams.length === 0) return null;
+        if (teams.length === 1) return 0;
+
+        const options = teams.map((_, i) => `${i}`).join(", ");
+        const response = prompt(
+          `${actionName}: Which team number (${options})?`,
+          "0",
+        );
+        if (response === null) return null;
+
+        const idx = parseInt(response.trim(), 10);
+        if (!isNaN(idx) && idx >= 0 && idx < teams.length) {
+          return idx;
+        }
+        alert(`Invalid team number. Please choose one of: ${options}`);
+        return null;
+      }
+
+      function promptAddPlayer() {
+        toggleFunctionButtons();
+        const teamIndex = promptTeamIndex("Add Bowler");
+        if (teamIndex !== null) {
+          addPlayer(teamIndex);
+        }
+      }
+
+      function promptRemovePlayer() {
+        toggleFunctionButtons();
+        const teamIndex = promptTeamIndex("Remove Bowler");
+        if (teamIndex !== null) {
+          removePlayer(teamIndex);
+        }
+      }
+
+      function addPlayer(teamIndex) {
+        const team = teams[teamIndex];
+        if (!team) return;
+        team.players.push(newPlayer());
+        team.selectedIndex = team.players.length - 1;
+        fullRebuild();
+      }
+
+      function removePlayer(teamIndex) {
+        const team = teams[teamIndex];
+        if (!team || team.players.length === 0) return;
+        const p = getPlayer(teamIndex);
+        if (!p) return;
+
+        if (
+          !confirm(
+            `Are you sure you want to remove ${p.name || "unnamed bowler"}?`,
+          )
+        )
+          return;
+
+        team.players.splice(team.selectedIndex, 1);
+        team.selectedIndex = team.players.length
+          ? Math.min(team.selectedIndex, team.players.length - 1)
+          : -1;
+        fullRebuild();
+      }
+
+      function clearScores() {
+        if (
+          !confirm(
+            "This will remove ALL scores from ALL bowlers across all teams. Proceed?",
+          )
+        ) {
+          toggleFunctionButtons();
+          return;
+        }
+        teams.forEach((team) => {
+          team.players.forEach((p) => {
+            p.rolls.fill("");
+            p.splits.clear();
+          });
+          team.selectedIndex = 0;
+        });
+        render();
+        toggleFunctionButtons();
+      }
+
+      function selectPlayer(teamIndex, playerIndex) {
+        const team = teams[teamIndex];
+        if (!team || playerIndex < 0 || playerIndex >= team.players.length)
+          return;
+        team.selectedIndex = playerIndex;
+        render();
+      }
+
+      function flyScoreSymbol(symbol, targetCell, onComplete) {
+        if (!targetCell) {
+          if (onComplete) onComplete();
+          return;
+        }
+
+        const targetRect = targetCell.getBoundingClientRect();
+        const flyer = document.createElement("div");
+        flyer.className = `flyer-symbol ${symbol === "X" ? "strike" : "spare"}`;
+        flyer.textContent = symbol;
+        document.body.appendChild(flyer);
+
+        const startX = window.innerWidth / 2;
+        const startY = window.innerHeight / 2;
+        const targetCenterX = targetRect.left + targetRect.width / 2;
+        const targetCenterY = targetRect.top + targetRect.height / 2;
+
+        flyer.style.left = `${startX}px`;
+        flyer.style.top = `${startY}px`;
+
+        // Total duration: 1100ms
+        // 0ms - 165ms: Pop in to huge scale
+        // 165ms - 805ms: Hold prominently in center
+        // 805ms - 1100ms: Smoothly travel and shrink into target cell
+        const animation = flyer.animate(
+          [
+            {
+              transform: "translate(-50%, -50%) scale(0.2)",
+              opacity: 0,
+            },
+            {
+              transform: "translate(-50%, -50%) scale(15.0)",
+              opacity: 1,
+              offset: 0.15,
+            },
+            {
+              transform: "translate(-50%, -50%) scale(13.8)",
+              opacity: 1,
+              offset: 0.75,
+            },
+            {
+              transform: `translate(${targetCenterX - startX}px, ${targetCenterY - startY}px) translate(-50%, -50%) scale(0.45)`,
+              opacity: 0.9,
+              offset: 1.0,
+            },
+          ],
+          {
+            duration: 1100,
+            easing: "cubic-bezier(0.25, 1, 0.5, 1)",
+          },
+        );
+
+        animation.onfinish = () => {
+          flyer.remove();
+          if (targetCell) {
+            targetCell.classList.remove("anim-impact");
+            void targetCell.offsetWidth; // Reflow
+            targetCell.classList.add("anim-impact");
+
+            // Remove the class after the animation completes so it doesn't lock styles
+            setTimeout(() => {
+              targetCell.classList.remove("anim-impact");
+            }, 400);
+          }
+          if (onComplete) onComplete();
+        };
+      }
+
+      function activeRollIndex(p) {
+        for (let i = 0; i < ROLLS; i++) {
+          if (p.rolls[i]) continue;
+          if (
+            i === 0 ||
+            (i <= 18 && !isStrike(p.rolls[i - 1])) ||
+            i === 19 ||
+            (i === 20 && (isStrike(p.rolls[18]) || isSpare(p.rolls[19])))
+          ) {
+            return i;
+          }
+        }
+        return -1;
+      }
+
+      function nextActivePlayerIndex(teamIndex, startIndex) {
+        const team = teams[teamIndex];
+        for (let i = 1; i <= team.players.length; i++) {
+          const candidateIndex = (startIndex + i) % team.players.length;
+          if (activeRollIndex(team.players[candidateIndex]) !== -1) {
+            return candidateIndex;
+          }
+        }
+        return startIndex;
+      }
+
+      function buttonRules(p, index) {
+        const rules = {
+          strikeSpare: "X",
+          showSplit: false,
+          disabledNumbers: new Set(),
+        };
+        if (index < 0) return rules;
+        const previous = p.rolls[index - 1];
+        if (index === 19) {
+          rules.strikeSpare = isStrike(previous) ? "X" : "/";
+          rules.showSplit =
+            !isStrike(previous) &&
+            rollPoints(previous) > 1 &&
+            rollPoints(previous) < 9;
+        } else if (index === 20) {
+          rules.strikeSpare =
+            isStrike(previous) || isSpare(previous) ? "X" : "/";
+          rules.showSplit =
+            !isStrike(previous) &&
+            !isSpare(previous) &&
+            rollPoints(previous) > 1 &&
+            rollPoints(previous) < 9;
+        } else if (index % 2 === 0) {
+          rules.strikeSpare = "X";
+        } else {
+          rules.strikeSpare = "/";
+          rules.showSplit =
+            rollPoints(previous) > 1 && rollPoints(previous) < 9;
+        }
+        if (index % 2 === 1 || index === 19 || index === 20) {
+          for (let n = 0; n <= 9; n++) {
+            if (!isStrike(previous) && n + rollPoints(previous) > 9) {
+              rules.disabledNumbers.add(String(n));
+            }
+          }
+        }
+        return rules;
+      }
+
+      function updateScoreButtons() {
+        teams.forEach((team, teamIndex) => {
+          const keypad = document.querySelector(
+            `.scoreButtonTable[data-team="${teamIndex}"]`,
+          );
+          if (!keypad) return;
+
+          const buttons = [...keypad.querySelectorAll("button.scoreButton")];
+          const p = getPlayer(teamIndex);
+          const index = p ? activeRollIndex(p) : -1;
+          const rules = buttonRules(p || newPlayer(), index);
+
+          buttons.forEach((button) => {
+            button.disabled = false;
+            button.style.display = "block";
+            if (button.name === "strikeSpare") {
+              button.textContent = rules.strikeSpare;
+            } else if (button.textContent === "S") {
+              button.style.display = rules.showSplit ? "block" : "none";
+            } else if (button.textContent === "9") {
+              button.style.display = rules.showSplit ? "none" : "block";
+              button.disabled = rules.disabledNumbers.has(button.textContent);
+            } else if (/^\d$/.test(button.textContent)) {
+              button.disabled = rules.disabledNumbers.has(button.textContent);
+            }
+          });
+
+          if (p && index === -1) {
+            buttons.forEach((button) => {
+              button.disabled = button.textContent.length === 1;
+            });
+          }
+        });
+      }
+
+      let isAnimationInProgress = false;
+
+      function addScore(teamIndex, button) {
+        if (isAnimationInProgress) return;
+
+        const team = teams[teamIndex];
+        if (!team) return;
+        const p = getPlayer(teamIndex);
+        if (!p) return;
+        const index = activeRollIndex(p);
+        if (index < 0) return;
+
+        const value = button.textContent;
+
+        // Locate the DOM cell for this roll prior to rebuilding/rendering
+        const rollRow = team.tbody
+          ? team.tbody.children[team.selectedIndex * 3 + 1]
+          : null;
+        const targetCell = rollRow ? rollRow.cells[index] : null;
+
+        // Record roll
+        p.rolls[index] = value;
+        p.splits.delete(index);
+
+        // Determine if turn advances to the next bowler
+        const advance =
+          index === 20 ||
+          (index === 19 &&
+            !isSpare(value) &&
+            !isStrike(value) &&
+            !isStrike(p.rolls[18])) ||
+          (isStrike(value) && index !== 18 && index !== 19) ||
+          (index % 2 === 1 && index !== 19);
+
+        const isAnimatedRoll = isStrike(value) || isSpare(value);
+
+        if (isAnimatedRoll && advance && targetCell) {
+          // Keep current bowler highlighted during the flight
+          render();
+          isAnimationInProgress = true;
+
+          flyScoreSymbol(value, targetCell, () => {
+            // Advance bowler and update highlight only after flight finishes
+            team.selectedIndex = nextActivePlayerIndex(
+              teamIndex,
+              team.selectedIndex,
+            );
+            isAnimationInProgress = false;
+            render();
+          });
+        } else if (isAnimatedRoll && targetCell) {
+          // Animated roll within same frame (e.g., 10th frame strike) without player advance
+          render();
+          isAnimationInProgress = true;
+
+          flyScoreSymbol(value, targetCell, () => {
+            isAnimationInProgress = false;
+            render();
+          });
+        } else {
+          // Immediate advance for standard number rolls
+          if (advance) {
+            team.selectedIndex = nextActivePlayerIndex(
+              teamIndex,
+              team.selectedIndex,
+            );
+          }
+          render();
+        }
+      }
+
+      function markSplit(teamIndex) {
+        const p = getPlayer(teamIndex);
+        if (!p) return;
+        const index = activeRollIndex(p);
+        const previous = index - 1;
+        if (previous >= 0 && p.rolls[previous]) {
+          p.splits.has(previous)
+            ? p.splits.delete(previous)
+            : p.splits.add(previous);
+        }
+        render();
+      }
+
+      function removeLastScore(teamIndex) {
+        const p = getPlayer(teamIndex);
+        if (!p) return;
+        let index = activeRollIndex(p);
+        if (index < 0) index = ROLLS;
+        while (index > 0 && !p.rolls[index - 1]) index--;
+        index--;
+        while (index >= 0 && !p.rolls[index]) index--;
+        if (index < 0) return;
+        p.rolls[index] = "";
+        p.splits.delete(index);
+        render();
+      }
+
+      function chronologicalRolls(p) {
+        const rolls = [];
+        for (let frame = 0; frame < 9; frame++) {
+          const first = p.rolls[frame * 2];
+          const second = p.rolls[frame * 2 + 1];
+          if (!first) break;
+          rolls.push(rollPoints(first));
+          if (!isStrike(first) && second) {
+            rolls.push(
+              isSpare(second) ? 10 - rollPoints(first) : rollPoints(second),
+            );
+          }
+        }
+        const first10 = p.rolls[18];
+        const second10 = p.rolls[19];
+        const third10 = p.rolls[20];
+        if (first10) {
+          rolls.push(rollPoints(first10));
+          if (second10) {
+            rolls.push(
+              isSpare(second10)
+                ? 10 - rollPoints(first10)
+                : rollPoints(second10),
+            );
+          }
+          if (third10) {
+            rolls.push(
+              isSpare(third10)
+                ? 10 - rollPoints(second10)
+                : rollPoints(third10),
+            );
+          }
+        }
+        return rolls;
+      }
+
+      function calculateMinScore(p) {
+        const projected = { rolls: [...p.rolls], splits: new Set() };
+        for (let frame = 0; frame < 9; frame++) {
+          const idx1 = frame * 2;
+          const idx2 = frame * 2 + 1;
+          if (!projected.rolls[idx1]) {
+            projected.rolls[idx1] = "0";
+            projected.rolls[idx2] = "0";
+          } else if (
+            !isStrike(projected.rolls[idx1]) &&
+            !projected.rolls[idx2]
+          ) {
+            projected.rolls[idx2] = "0";
+          }
+        }
+        const r18 = projected.rolls[18];
+        const r19 = projected.rolls[19];
+        if (!r18) {
+          projected.rolls[18] = "0";
+          projected.rolls[19] = "0";
+        } else if (!r19) {
+          projected.rolls[19] = "0";
+        }
+        if (
+          (isStrike(projected.rolls[18]) ||
+            isSpare(projected.rolls[19]) ||
+            isStrike(projected.rolls[19])) &&
+          !projected.rolls[20]
+        ) {
+          projected.rolls[20] = "0";
+        }
+        const scores = calculateScores(projected);
+        return scores[9] ?? 0;
+      }
+
+      function calculateMaxScore(p) {
+        const projected = { rolls: [...p.rolls], splits: new Set() };
+        for (let frame = 0; frame < 9; frame++) {
+          const idx1 = frame * 2;
+          const idx2 = frame * 2 + 1;
+          if (!projected.rolls[idx1]) {
+            projected.rolls[idx1] = "X";
+            projected.rolls[idx2] = "";
+          } else if (
+            !isStrike(projected.rolls[idx1]) &&
+            !projected.rolls[idx2]
+          ) {
+            projected.rolls[idx2] = "/";
+          }
+        }
+        const r18 = projected.rolls[18];
+        const r19 = projected.rolls[19];
+        const r20 = projected.rolls[20];
+        if (!r18) {
+          projected.rolls[18] = "X";
+          projected.rolls[19] = "X";
+          projected.rolls[20] = "X";
+        } else if (!r19) {
+          if (isStrike(r18)) {
+            projected.rolls[19] = "X";
+            projected.rolls[20] = "X";
+          } else {
+            projected.rolls[19] = "/";
+            projected.rolls[20] = "X";
+          }
+        } else if (!r20 && (isStrike(r18) || isSpare(r19) || isStrike(r19))) {
+          projected.rolls[20] = "X";
+        }
+        const scores = calculateScores(projected);
+        return scores[9] ?? 0;
+      }
+
+      function calculateScores(p) {
+        const scores = Array(FRAMES).fill(null);
+        const rolls = chronologicalRolls(p);
+        let rollIndex = 0;
+        let total = 0;
+        for (let frame = 0; frame < 10; frame++) {
+          if (rollIndex >= rolls.length) break;
+          if (frame < 9) {
+            const first = rolls[rollIndex];
+            if (first === 10) {
+              if (rollIndex + 2 >= rolls.length) break;
+              total += 10 + rolls[rollIndex + 1] + rolls[rollIndex + 2];
+              scores[frame] = total;
+              rollIndex += 1;
+              continue;
+            }
+            if (rollIndex + 1 >= rolls.length) break;
+            const firstBall = rolls[rollIndex];
+            const secondBall = rolls[rollIndex + 1];
+            if (firstBall + secondBall === 10) {
+              if (rollIndex + 2 >= rolls.length) break;
+              total += 10 + rolls[rollIndex + 2];
+            } else {
+              total += firstBall + secondBall;
+            }
+            scores[frame] = total;
+            rollIndex += 2;
+            continue;
+          }
+          const frame10Rolls = rolls.slice(rollIndex);
+          if (frame10Rolls.length < 2) break;
+          const first = frame10Rolls[0];
+          const second = frame10Rolls[1];
+          const needsThird = first === 10 || first + second === 10;
+          if (needsThird && frame10Rolls.length < 3) break;
+          total += frame10Rolls
+            .slice(0, needsThird ? 3 : 2)
+            .reduce((sum, ball) => sum + ball, 0);
+          scores[frame] = total;
+        }
+        return scores;
+      }
+
+      function buildKeypadHTML(teamIndex) {
+        return `
+          <div>
+            <table class="scoreButtonTable" data-team="${teamIndex}">
+              <tr>
+                <td class="scoreButtonCell">
+                  <button class="scoreButton" onclick="removeLastScore(${teamIndex})">&lt;-</button>
+                </td>
+                <td class="scoreButtonCell">
+                  <button class="scoreButton" onclick="addScore(${teamIndex}, this)">9</button>
+                  <button class="scoreButton" onclick="markSplit(${teamIndex})">S</button>
+                </td>
+                <td class="scoreButtonCell"><button class="scoreButton" onclick="addScore(${teamIndex}, this)">7</button></td>
+                <td class="scoreButtonCell"><button class="scoreButton" onclick="addScore(${teamIndex}, this)">5</button></td>
+                <td class="scoreButtonCell"><button class="scoreButton" onclick="addScore(${teamIndex}, this)">3</button></td>
+                <td class="scoreButtonCell"><button class="scoreButton" onclick="addScore(${teamIndex}, this)">1</button></td>
+              </tr>
+              <tr>
+                <td class="scoreButtonCell">
+                  <button name="strikeSpare" class="scoreButton" onclick="addScore(${teamIndex}, this)">X</button>
+                </td>
+                <td class="scoreButtonCell"><button class="scoreButton" onclick="addScore(${teamIndex}, this)">8</button></td>
+                <td class="scoreButtonCell"><button class="scoreButton" onclick="addScore(${teamIndex}, this)">6</button></td>
+                <td class="scoreButtonCell"><button class="scoreButton" onclick="addScore(${teamIndex}, this)">4</button></td>
+                <td class="scoreButtonCell"><button class="scoreButton" onclick="addScore(${teamIndex}, this)">2</button></td>
+                <td class="scoreButtonCell"><button class="scoreButton" onclick="addScore(${teamIndex}, this)">0</button></td>
+              </tr>
+            </table>
+          </div>
+        `;
+      }
+
+      function render() {
+        const requiresRebuild = teams.some(
+          (t) => !t.tbody || t.tbody.children.length !== t.players.length * 3,
+        );
+        if (requiresRebuild) {
+          fullRebuild();
+          return;
+        }
+
+        teams.forEach((team, tIdx) => {
+          team.players.forEach((p, idx) => {
+            const nameRow = team.tbody.children[idx * 3];
+            const rollRow = team.tbody.children[idx * 3 + 1];
+            const totalRow = team.tbody.children[idx * 3 + 2];
+            const isCurrent = idx === team.selectedIndex;
+
+            [nameRow, rollRow, totalRow].forEach((row) => {
+              row.classList.toggle("selected", isCurrent);
+            });
+
+            const scores = calculateScores(p);
+            p.rolls.forEach((roll, rIdx) => {
+              const cell = rollRow.cells[rIdx];
+              cell.textContent = roll;
+              cell.classList.toggle("split", p.splits.has(rIdx));
+              cell.classList.toggle(
+                "selected",
+                isCurrent && rIdx === activeRollIndex(p),
+              );
+            });
+
+            scores.forEach((score, fIdx) => {
+              const cell = totalRow.cells[fIdx];
+              cell.textContent = score !== null ? score : "";
+              cell.classList.toggle("isvisible", score !== null);
+            });
+
+            nameRow.cells[1].textContent = `Min: ${calculateMinScore(p)} - Max: ${calculateMaxScore(p)}`;
+          });
+        });
+
+        updateScoreButtons();
+      }
+
+      function fullRebuild() {
+        const container = document.getElementById("teamsContainer");
+        container.replaceChildren();
+
+        teams.forEach((team, tIdx) => {
+          const wrapper = document.createElement("div");
+          wrapper.className = "team-wrapper";
+
+          // Team Score Table
+          const table = document.createElement("table");
+          table.className = "scoreTable";
+          table.innerHTML = `
+            <thead>
+              <tr>
+                <th class="frame" colspan="2">1</th>
+                <th class="frame" colspan="2">2</th>
+                <th class="frame" colspan="2">3</th>
+                <th class="frame" colspan="2">4</th>
+                <th class="frame" colspan="2">5</th>
+                <th class="frame" colspan="2">6</th>
+                <th class="frame" colspan="2">7</th>
+                <th class="frame" colspan="2">8</th>
+                <th class="frame" colspan="2">9</th>
+                <th class="frame" colspan="3">10</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          `;
+
+          const tbody = table.querySelector("tbody");
+          team.tbody = tbody;
+
+          team.players.forEach((p, index) => {
+            const nameRow = document.createElement("tr");
+            const rollRow = document.createElement("tr");
+            const totalRow = document.createElement("tr");
+
+            const nameCell = document.createElement("td");
+            nameCell.colSpan = 8;
+            const input = document.createElement("input");
+            input.className = "input-playername";
+            input.placeholder = `Bowler ${index + 1}`;
+            input.value = p.name;
+            input.addEventListener("input", (event) => {
+              p.name = event.target.value;
+            });
+            // Add keydown listener to hide the keyboard when "Enter" / "Go" is pressed
+            input.addEventListener("keydown", function(event) {
+              if (event.key === "Enter") {
+                event.preventDefault();
+                this.blur(); // Removes focus and hides the virtual keyboard
+              }
+            });            
+            nameCell.appendChild(input);
+            nameRow.appendChild(nameCell);
+
+            const note = document.createElement("td");
+            note.colSpan = 13;
+            note.className = "playerNote";
+            nameRow.appendChild(note);
+
+            for (let r = 0; r < ROLLS; r++) {
+              const cell = document.createElement("td");
+              cell.className = "roll";
+              rollRow.appendChild(cell);
+            }
+
+            for (let f = 0; f < FRAMES; f++) {
+              const cell = document.createElement("td");
+              cell.colSpan = f === 9 ? 3 : 2;
+              cell.className = "frameTotal";
+              totalRow.appendChild(cell);
+            }
+
+            [nameRow, rollRow, totalRow].forEach((row) => {
+              row.addEventListener("click", (event) => {
+                if (event.target !== input) selectPlayer(tIdx, index);
+              });
+              tbody.appendChild(row);
+            });
+          });
+
+          wrapper.appendChild(table);
+
+          // Append Keypad for this Team
+          const keypadContainer = document.createElement("div");
+          keypadContainer.innerHTML = buildKeypadHTML(tIdx);
+          wrapper.appendChild(keypadContainer);
+
+          container.appendChild(wrapper);
+        });
+
+        render();
+      }
+
+      let matchScores = {
+        teamNames: ["Boro", "Guest"],
+        rows: [["", ""]], // Stores arrays of scores per row: [team0Score, team1Score]
+        note: "",
+      };
+
+      function updateTopMessageDisplay() {
+        const messageBox = document.querySelector("#TopMessage");
+        if (!messageBox) return;
+
+        const t0Name = matchScores.teamNames[0].trim() || "Team 1";
+        const t1Name = matchScores.teamNames[1].trim();
+
+        // Sum up scores across all dynamic rows
+        let t0Total = 0;
+        let t1Total = 0;
+        matchScores.rows.forEach(r => {
+          t0Total += Number(r[0]) || 0;
+          t1Total += Number(r[1]) || 0;
+        });
+
+        if (!t1Name) {
+          messageBox.value = `${matchScores.note}\n${t0Name}: ${t0Total}`;
+        } else {
+          messageBox.value = `${matchScores.note}\n${t0Name}: ${t0Total} - ${t1Name}: ${t1Total} (${t0Total - t1Total})`;
+        }
+      }
+
+      function openMatchScoreModal() {
+        toggleFunctionButtons();
+
+        document.getElementById("nameTeam0").value = matchScores.teamNames[0];
+        document.getElementById("nameTeam1").value = matchScores.teamNames[1];
+        document.getElementById("note").value = matchScores.note;
+
+        const container = document.getElementById("matchScoreRowsContainer");
+        container.innerHTML = "";
+
+        // Populate rows or default to one row if empty
+        const rowsToRender = matchScores.rows.length > 0 ? matchScores.rows : [[0, 0]];
+        rowsToRender.forEach(r => {
+          appendMatchScoreRowDOM(r[0], r[1]);
+        });
+
+        document.getElementById("matchScoreModal").classList.add("active");
+      }
+
+      function addMatchScoreRow(val0 = "", val1 = "") {
+        appendMatchScoreRowDOM(val0, val1);
+      }
+
+      function appendMatchScoreRowDOM(val0, val1) {
+        const container = document.getElementById("matchScoreRowsContainer");
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td style="padding: 4px;">
+            <input type="number" inputmode="numeric" pattern="[0-9]*" class="score-row-input-0" value="${val0}" placeholder="0" style="width: 100%; padding: 4px; border-radius: 4px; border: 1px solid #475569; background: #1e293b; color: #fff; font-size: 13px; font-weight: bold; text-align: right; box-sizing: border-box;" />
+          </td>
+          <td style="padding: 4px;">
+            <input type="number" inputmode="numeric" pattern="[0-9]*" class="score-row-input-1" value="${val1}" placeholder="0" style="width: 100%; padding: 4px; border-radius: 4px; border: 1px solid #475569; background: #1e293b; color: #fff; font-size: 13px; font-weight: bold; text-align: right; box-sizing: border-box;" />
+          </td>
+          <td style="padding: 4px; text-align: center;">
+            <button type="button" class="modal-close" onclick="this.closest('tr').remove()" style="font-size: 18px; color: #94a3b8; background: none; border: none; cursor: pointer;">&times;</button>
+          </td>
+        `;
+
+        // Add event listener to hide the keyboard when "Go" (Enter) is pressed
+        tr.querySelectorAll("input[type='number']").forEach(input => {
+          input.addEventListener("keydown", function(e) {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              this.blur(); // Removes focus, hiding the virtual keyboard
+            }
+          });
+        });
+
+        container.appendChild(tr);
+      }
+
+      function closeMatchScoreModal() {
+        document.getElementById("matchScoreModal").classList.remove("active");
+      }
+
+      function saveMatchScores() {
+        const name0 = document.getElementById("nameTeam0").value.trim() || "Team 1";
+        const name1 = document.getElementById("nameTeam1").value.trim();
+        const noteInput = document.getElementById("note").value.trim();
+
+        matchScores.teamNames = [name0, name1];
+        matchScores.note = noteInput;
+
+        // Gather scores from all active rows in the table
+        matchScores.rows = [];
+        const container = document.getElementById("matchScoreRowsContainer");
+        const trs = container.querySelectorAll("tr");
+
+        trs.forEach(tr => {
+          const input0 = tr.querySelector(".score-row-input-0");
+          const input1 = tr.querySelector(".score-row-input-1");
+          const val0 = parseInt(input0.value, 10) || 0;
+          const val1 = parseInt(input1.value, 10) || 0;
+          matchScores.rows.push([val0, val1]);
+        });
+
+        if (matchScores.rows.length === 0) {
+          matchScores.rows.push(["", ""]);
+        }
+
+        updateTopMessageDisplay();
+        closeMatchScoreModal();
+      }
+
+      window.addEventListener("DOMContentLoaded", initApp);
+    </script>
+  </body>
+</html>
