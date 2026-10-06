@@ -1,0 +1,539 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Baseball Scoresheet</title>
+    <style>
+      body {
+        margin: 10px;
+        font-family: Arial, sans-serif;
+        background: #000;
+        color: #fff;
+      }
+
+      .header-panel {
+        background: #1e293b;
+        border: 1px solid #475569;
+        border-radius: 8px;
+        padding: 10px;
+        margin-bottom: 12px;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        font-size: 13px;
+        font-weight: bold;
+        text-align: center;
+      }
+
+      .clickable-stat {
+        cursor: pointer;
+        padding: 4px 8px;
+        background: #334155;
+        border-radius: 4px;
+        border: 1px solid #64748b;
+        transition: background 0.15s ease;
+      }
+
+      .clickable-stat:hover {
+        background: #475569;
+      }
+
+      /* Base Runner Toggles */
+      .bases-panel {
+        background: #0f172a;
+        border: 1px solid #334155;
+        border-radius: 8px;
+        padding: 8px;
+        margin-bottom: 12px;
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .base-toggle-btn {
+        background: #334155;
+        color: #94a3b8;
+        border: 1px solid #475569;
+        border-radius: 6px;
+        padding: 6px 12px;
+        font-size: 12px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+
+      .base-toggle-btn.active {
+        background: #f59e0b;
+        color: #000;
+        border-color: #d97706;
+      }
+
+      /* Score Table */
+      table.scoreTable {
+        border-collapse: collapse;
+        background: #eee;
+        color: #000;
+        font-size: 13px;
+        width: 100%;
+        margin-bottom: 12px;
+      }
+
+      table.scoreTable th,
+      table.scoreTable td {
+        border: 1px solid #333;
+        padding: 6px;
+        text-align: center;
+      }
+
+      th.frame {
+        background: #aaa !important;
+      }
+
+      th.runs-header {
+        background: #fef08a !important;
+        color: #000 !important;
+      }
+
+      td.runs-cell {
+        background: #fef9c3 !important;
+        font-weight: bold;
+      }
+
+      th.team-col {
+        width: 95px;
+        min-width: 95px;
+        max-width: 95px;
+      }
+
+      td.team-name-cell {
+        width: 95px;
+        min-width: 95px;
+        max-width: 95px;
+        padding: 2px;
+      }
+
+      .input-team-title {
+        font-family: inherit;
+        font-size: 12px;
+        font-weight: bold;
+        color: #000;
+        background: transparent;
+        border: none;
+        width: 100%;
+        box-sizing: border-box;
+        text-align: left;
+        outline: none;
+      }
+
+      td.score-cell {
+        cursor: pointer;
+        transition: background 0.15s ease;
+      }
+
+      td.score-cell:hover {
+        background: #cbd5e1 !important;
+      }
+
+      /* Highlight for current active inning cell */
+      td.score-cell.current-inning {
+        background-color: #38bdf8 !important;
+        color: #000 !important;
+        font-weight: bold;
+        border: 2px solid #0284c7;
+      }
+
+      /* Keypad */
+      table.scoreButtonTable {
+        border-collapse: collapse;
+        width: 100%;
+        max-width: 400px;
+        margin: 0 auto;
+      }
+
+      td.scoreButtonCell {
+        border: none;
+        padding: 4px;
+      }
+
+      button.scoreButton {
+        cursor: pointer;
+        height: 3.5em;
+        width: 100%;
+        background: #2563eb;
+        color: #ffffff;
+        border: none;
+        border-radius: 6px;
+        font-weight: bold;
+        font-size: 14px;
+        transition: background 0.15s ease;
+      }
+
+      button.scoreButton:hover {
+        background: #1d4ed8;
+      }
+
+      button.scoreButton.action-out {
+        background: #ef4444;
+      }
+      button.scoreButton.action-out:hover {
+        background: #dc2626;
+      }
+
+      button.scoreButton.action-score {
+        background: #16a34a;
+      }
+      button.scoreButton.action-score:hover {
+        background: #15803d;
+      }
+
+      button.scoreButton.action-reset {
+        background: #d97706;
+      }
+      button.scoreButton.action-reset:hover {
+        background: #b45309;
+      }
+    </style>
+  </head>
+
+  <body>
+
+    <!-- Header Panel with Clickable Stats -->
+    <div class="header-panel">
+      <div>
+        <div style="font-size: 10px; color: #94a3b8;">BALLS - STRIKES</div>
+        <div id="displayCount" class="clickable-stat" onclick="manualEditCount()">0 - 0</div>
+      </div>
+      <div>
+        <div style="font-size: 10px; color: #94a3b8;">OUTS</div>
+        <div id="displayOuts" class="clickable-stat" onclick="manualEditOuts()">0</div>
+      </div>
+      <div>
+        <div style="font-size: 10px; color: #94a3b8;">INNING</div>
+        <div id="displayInning" class="clickable-stat" onclick="manualEditInning()">Top 1</div>
+      </div>
+    </div>
+
+    <!-- Manual Base Toggles -->
+    <div class="bases-panel">
+      <span style="font-size: 12px; color: #94a3b8; font-weight: bold;">Bases Occupied:</span>
+      <button id="btnBase1" class="base-toggle-btn" onclick="toggleBase(1)">1B</button>
+      <button id="btnBase2" class="base-toggle-btn" onclick="toggleBase(2)">2B</button>
+      <button id="btnBase3" class="base-toggle-btn" onclick="toggleBase(3)">3B</button>
+    </div>
+
+    <!-- Scoreboard -->
+    <table class="scoreTable" id="scoreTable">
+      <thead>
+        <tr id="headerRow">
+          <th class="team-col">Team</th>
+          <th class="frame" data-inn="1">1</th>
+          <th class="frame runs-header">R</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="team-name-cell">
+            <input type="text" id="visitingName" class="input-team-title" value="Visitors" />
+          </td>
+          <td id="vis_r_0" class="score-cell" onclick="manualEditScore('vis', 0)">0</td>
+          <td id="visTotalR" class="runs-cell">0</td>
+        </tr>
+        <tr>
+          <td class="team-name-cell">
+            <input type="text" id="homeName" class="input-team-title" value="Home" />
+          </td>
+          <td id="home_r_0" class="score-cell" onclick="manualEditScore('home', 0)">0</td>
+          <td id="homeTotalR" class="runs-cell">0</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Keypad -->
+    <table class="scoreButtonTable">
+      <tr>
+        <td class="scoreButtonCell" style="width: 33.3%;">
+          <button class="scoreButton" onclick="recordAction('ball')">Ball</button>
+        </td>
+        <td class="scoreButtonCell" style="width: 33.3%;">
+          <button class="scoreButton" onclick="recordAction('strike')">Strike</button>
+        </td>
+        <td class="scoreButtonCell" style="width: 33.3%;">
+          <button class="scoreButton action-out" onclick="recordAction('out')">Out</button>
+        </td>
+      </tr>
+      <tr>
+        <td class="scoreButtonCell" style="width: 33.3%;">
+          <button class="scoreButton action-reset" onclick="recordAction('resetCount')">Reset Count</button>
+        </td>
+        <td class="scoreButtonCell" style="width: 33.3%;">
+          <button class="scoreButton action-score" onclick="recordAction('score')">Score+</button>
+        </td>
+        <td class="scoreButtonCell" style="width: 33.3%;">
+          <button class="scoreButton" style="background: #475569;" onclick="undoAction()">&lt;-</button>
+        </td>
+      </tr>
+    </table>
+
+    <script>
+      let gameState = {
+        balls: 0,
+        strikes: 0,
+        outs: 0,
+        inning: 1,
+        isTop: true, // true = Top, false = Bottom
+        maxInningDisplayed: 1,
+        bases: { 1: false, 2: false, 3: false },
+        visitingScores: [0],
+        homeScores: [0]
+      };
+
+      let historyStack = [];
+
+      function saveStateSnapshot() {
+        historyStack.push(JSON.parse(JSON.stringify(gameState)));
+      }
+
+      function undoAction() {
+        if (historyStack.length === 0) return;
+        gameState = historyStack.pop();
+        rebuildTableStructure();
+        render();
+      }
+
+      function toggleBase(baseNum) {
+        saveStateSnapshot();
+        gameState.bases[baseNum] = !gameState.bases[baseNum];
+        render();
+      }
+
+      function manualEditCount() {
+        const val = prompt("Enter count as 'Balls-Strikes' (e.g., 2-1):", `${gameState.balls}-${gameState.strikes}`);
+        if (!val) return;
+        const parts = val.split('-');
+        if (parts.length === 2) {
+          const b = parseInt(parts[0].trim(), 10);
+          const s = parseInt(parts[1].trim(), 10);
+          if (!isNaN(b) && !isNaN(s) && b >= 0 && b <= 3 && s >= 0 && s <= 2) {
+            saveStateSnapshot();
+            gameState.balls = b;
+            gameState.strikes = s;
+            render();
+            return;
+          }
+        }
+        alert("Invalid format. Use Balls-Strikes (e.g. 2-1).");
+      }
+
+      function manualEditOuts() {
+        const val = prompt("Enter outs (0-2):", gameState.outs);
+        if (val === null) return;
+        const o = parseInt(val.trim(), 10);
+        if (!isNaN(o) && o >= 0 && o <= 2) {
+          saveStateSnapshot();
+          gameState.outs = o;
+          render();
+        } else {
+          alert("Outs must be between 0 and 2.");
+        }
+      }
+
+      function manualEditInning() {
+        const val = prompt("Enter inning number (1-9+):", gameState.inning);
+        if (val === null) return;
+        const inn = parseInt(val.trim(), 10);
+        if (!isNaN(inn) && inn >= 1) {
+          const half = confirm(`Is it the TOP of inning ${inn}?\n(Click Cancel for BOTTOM)`);
+          saveStateSnapshot();
+          gameState.inning = inn;
+          gameState.isTop = half;
+          if (inn > gameState.maxInningDisplayed) {
+            gameState.maxInningDisplayed = inn;
+            while (gameState.visitingScores.length < inn) gameState.visitingScores.push(0);
+            while (gameState.homeScores.length < inn) gameState.homeScores.push(0);
+            rebuildTableStructure();
+          }
+          render();
+        } else {
+          alert("Invalid inning number.");
+        }
+      }
+
+      function manualEditScore(teamType, inningIndex) {
+        const scores = teamType === 'vis' ? gameState.visitingScores : gameState.homeScores;
+        const currentVal = scores[inningIndex] !== undefined ? scores[inningIndex] : 0;
+        const val = prompt(`Enter runs for Inning ${inningIndex + 1} (${teamType === 'vis' ? 'Visitors' : 'Home'}):`, currentVal);
+        if (val === null) return;
+        const runs = parseInt(val.trim(), 10);
+        if (!isNaN(runs) && runs >= 0) {
+          saveStateSnapshot();
+          scores[inningIndex] = runs;
+          render();
+        } else {
+          alert("Please enter a valid non-negative number.");
+        }
+      }
+
+      function recordAction(type) {
+        saveStateSnapshot();
+
+        if (type === 'ball') {
+          gameState.balls++;
+          if (gameState.balls >= 4) {
+            resetCount();
+          }
+        } else if (type === 'strike') {
+          gameState.strikes++;
+          if (gameState.strikes >= 3) {
+            recordOut();
+            resetCount();
+          }
+        } else if (type === 'out') {
+          recordOut();
+          resetCount();
+        } else if (type === 'resetCount') {
+          resetCount();
+        } else if (type === 'score') {
+          const idx = gameState.inning - 1;
+          if (gameState.isTop) {
+            gameState.visitingScores[idx] = (Number(gameState.visitingScores[idx]) || 0) + 1;
+          } else {
+            gameState.homeScores[idx] = (Number(gameState.homeScores[idx]) || 0) + 1;
+          }
+        }
+        render();
+      }
+
+      function resetCount() {
+        gameState.balls = 0;
+        gameState.strikes = 0;
+      }
+
+      function recordOut() {
+        gameState.outs++;
+        if (gameState.outs >= 3) {
+          gameState.outs = 0;
+          resetBases();
+          if (gameState.isTop) {
+            gameState.isTop = false; // Move to bottom of inning
+          } else {
+            gameState.isTop = true; // Move to top of next inning
+            gameState.inning++;
+            if (gameState.inning > gameState.maxInningDisplayed) {
+              gameState.maxInningDisplayed = gameState.inning;
+              gameState.visitingScores.push(0);
+              gameState.homeScores.push(0);
+              rebuildTableStructure();
+            }
+          }
+        }
+      }
+
+      function resetBases() {
+        gameState.bases = { 1: false, 2: false, 3: false };
+      }
+
+      function rebuildTableStructure() {
+        const headerRow = document.getElementById('headerRow');
+        headerRow.innerHTML = `<th class="team-col">Team</th>`;
+        for (let i = 1; i <= gameState.maxInningDisplayed; i++) {
+          const th = document.createElement('th');
+          th.className = 'frame';
+          th.textContent = i;
+          headerRow.appendChild(th);
+        }
+        const thR = document.createElement('th');
+        thR.className = 'frame runs-header';
+        thR.textContent = 'R';
+        headerRow.appendChild(thR);
+
+        rebuildRow('visiting');
+        rebuildRow('home');
+      }
+
+      function rebuildRow(teamType) {
+        const isVis = teamType === 'visiting';
+        const tbody = document.getElementById('scoreTable').querySelector('tbody');
+        const rowIndex = isVis ? 0 : 1;
+        const row = tbody.rows[rowIndex];
+        row.innerHTML = '';
+
+        // Team Name cell
+        const nameTd = document.createElement('td');
+        nameTd.className = 'team-name-cell';
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'input-team-title';
+        input.value = isVis ? document.getElementById('visitingName')?.value || 'Visitors' : document.getElementById('homeName')?.value || 'Home';
+        if (isVis) input.id = 'visitingName';
+        else input.id = 'homeName';
+        nameTd.appendChild(input);
+        row.appendChild(nameTd);
+
+        const scores = isVis ? gameState.visitingScores : gameState.homeScores;
+        for (let i = 0; i < gameState.maxInningDisplayed; i++) {
+          const td = document.createElement('td');
+          td.id = `${isVis ? 'vis' : 'home'}_r_${i}`;
+          td.className = 'score-cell';
+          td.textContent = scores[i] !== undefined ? scores[i] : 0;
+          const currentInn = i;
+          td.onclick = () => manualEditScore(isVis ? 'vis' : 'home', currentInn);
+          row.appendChild(td);
+        }
+
+        // Total Runs
+        const totalR = scores.reduce((a, b) => Number(a) + (Number(b) || 0), 0);
+        const tdR = document.createElement('td');
+        tdR.className = 'runs-cell';
+        tdR.id = isVis ? 'visTotalR' : 'homeTotalR';
+        tdR.textContent = totalR;
+        row.appendChild(tdR);
+      }
+
+      function render() {
+        document.getElementById('displayCount').textContent = `${gameState.balls} - ${gameState.strikes}`;
+        document.getElementById('displayOuts').textContent = gameState.outs;
+        document.getElementById('displayInning').textContent = `${gameState.isTop ? 'Top' : 'Bot'} ${gameState.inning}`;
+
+        // Base buttons state
+        for (let b = 1; b <= 3; b++) {
+          const btn = document.getElementById(`btnBase${b}`);
+          if (gameState.bases[b]) {
+            btn.classList.add('active');
+          } else {
+            btn.classList.remove('active');
+          }
+        }
+
+        const visScores = gameState.visitingScores;
+        const homeScores = gameState.homeScores;
+
+        for (let i = 0; i < gameState.maxInningDisplayed; i++) {
+          const visCell = document.getElementById(`vis_r_${i}`);
+          const homeCell = document.getElementById(`home_r_${i}`);
+          
+          if (visCell) {
+            visCell.textContent = visScores[i] !== undefined ? visScores[i] : 0;
+            // Highlight current half inning cell
+            const isCurrentVis = gameState.isTop && (i === gameState.inning - 1);
+            visCell.classList.toggle('current-inning', isCurrentVis);
+          }
+
+          if (homeCell) {
+            homeCell.textContent = homeScores[i] !== undefined ? homeScores[i] : 0;
+            // Highlight current half inning cell
+            const isCurrentHome = !gameState.isTop && (i === gameState.inning - 1);
+            homeCell.classList.toggle('current-inning', isCurrentHome);
+          }
+        }
+
+        document.getElementById('visTotalR').textContent = visScores.reduce((a, b) => Number(a) + (Number(b) || 0), 0);
+        document.getElementById('homeTotalR').textContent = homeScores.reduce((a, b) => Number(a) + (Number(b) || 0), 0);
+      }
+
+      window.addEventListener('DOMContentLoaded', () => {
+        rebuildTableStructure();
+      });
+    </script>
+  </body>
+</html>
