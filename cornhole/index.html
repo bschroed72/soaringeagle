@@ -1,0 +1,572 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cornhole Scoresheet</title>
+    <style>
+      body {
+        margin: 10px;
+        font-family: Arial, sans-serif;
+        background: #000;
+        color: #fff;
+      }
+
+      .header-panel {
+        background: #1e293b;
+        border: 1px solid #475569;
+        border-radius: 8px;
+        padding: 10px;
+        margin-bottom: 12px;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        font-size: 13px;
+        font-weight: bold;
+        text-align: center;
+      }
+
+      .clickable-stat {
+        cursor: pointer;
+        padding: 4px 8px;
+        background: #334155;
+        border-radius: 4px;
+        border: 1px solid #64748b;
+        transition: background 0.15s ease;
+      }
+
+      .clickable-stat:hover {
+        background: #475569;
+      }
+
+      /* Side-by-Side Teams Container */
+      .teams-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+
+      .team-card {
+        background: #1e293b;
+        border: 1px solid #475569;
+        border-radius: 8px;
+        padding: 8px;
+        text-align: center;
+      }
+
+      .input-team-title {
+        font-family: inherit;
+        font-size: 13px;
+        font-weight: bold;
+        color: #38bdf8;
+        background: transparent;
+        border: none;
+        border-bottom: 1px dashed #475569;
+        width: 100%;
+        text-align: center;
+        outline: none;
+        margin-bottom: 6px;
+        padding-bottom: 2px;
+      }
+
+      .team-round-score-display {
+        font-size: 32px;
+        font-weight: bold;
+        color: #f59e0b;
+        margin-bottom: 2px;
+      }
+
+      .bags-label {
+        font-size: 10px;
+        color: #94a3b8;
+        font-weight: bold;
+        margin-bottom: 6px;
+      }
+
+      /* 4 Bag Columns Layout */
+      .bags-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 4px;
+      }
+
+      .bag-column {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .bag-label-num {
+        font-size: 9px;
+        color: #94a3b8;
+        margin-bottom: 2px;
+      }
+
+      .bag-btn {
+        cursor: pointer;
+        width: 100%;
+        height: 52px;
+        border: 1px solid #475569;
+        border-radius: 4px;
+        font-size: 10px;
+        font-weight: bold;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 0;
+        transition: background 0.15s ease, border-color 0.15s ease;
+      }
+
+      .bag-btn.status-miss {
+        background: #334155;
+        color: #94a3b8;
+        border-color: #475569;
+      }
+
+      .bag-btn.status-board {
+        background: #2563eb;
+        color: #fff;
+        border-color: #1d4ed8;
+      }
+
+      .bag-btn.status-hole {
+        background: #16a34a;
+        color: #fff;
+        border-color: #15803d;
+      }
+
+      /* Score Table */
+      table.scoreTable {
+        border-collapse: collapse;
+        background: #eee;
+        color: #000;
+        font-size: 13px;
+        width: 100%;
+        margin-bottom: 12px;
+      }
+
+      table.scoreTable th,
+      table.scoreTable td {
+        border: 1px solid #333;
+        padding: 6px;
+        text-align: center;
+      }
+
+      th.frame {
+        background: #aaa !important;
+      }
+
+      th.runs-header {
+        background: #fef08a !important;
+        color: #000 !important;
+      }
+
+      td.runs-cell {
+        background: #fef9c3 !important;
+        font-weight: bold;
+      }
+
+      td.score-cell {
+        cursor: pointer;
+        transition: background 0.15s ease;
+      }
+
+      td.score-cell:hover {
+        background: #cbd5e1 !important;
+      }
+
+      td.score-cell.current-round {
+        background-color: #38bdf8 !important;
+        color: #000 !important;
+        font-weight: bold;
+      }
+
+      .global-controls {
+        display: flex;
+        gap: 8px;
+        max-width: 400px;
+        margin: 0 auto;
+      }
+
+      .global-btn {
+        flex: 1;
+        cursor: pointer;
+        padding: 10px;
+        background: #475569;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        font-weight: bold;
+        font-size: 13px;
+      }
+      .global-btn:hover { background: #334155; }
+    </style>
+  </head>
+
+  <body>
+
+    <!-- Header Panel -->
+    <div class="header-panel">
+      <div>
+        <div style="font-size: 10px; color: #94a3b8;">ROUND</div>
+        <div id="displayRound" class="clickable-stat" onclick="manualEditRound()">Round 1</div>
+      </div>
+      <div>
+        <div style="font-size: 10px; color: #94a3b8;">BUST RESET TO</div>
+        <div id="displayBust" class="clickable-stat" onclick="manualEditBust()">13</div>
+      </div>
+    </div>
+
+    <!-- Side-by-Side Teams Controls -->
+    <div class="teams-grid">
+      <!-- Team 1 -->
+      <div class="team-card">
+        <input type="text" id="team1Name" class="input-team-title" value="Team 1" />
+        <div id="team1RoundScore" class="team-round-score-display">0</div>
+        <div class="bags-label">4 BAGS</div>
+        <div class="bags-grid" id="team1BagsGrid"></div>
+      </div>
+
+      <!-- Team 2 -->
+      <div class="team-card">
+        <input type="text" id="team2Name" class="input-team-title" value="Team 2" />
+        <div id="team2RoundScore" class="team-round-score-display">0</div>
+        <div class="bags-label">4 BAGS</div>
+        <div class="bags-grid" id="team2BagsGrid"></div>
+      </div>
+    </div>
+
+    <!-- Scoreboard Table -->
+    <table class="scoreTable" id="scoreTable">
+      <thead>
+        <tr id="headerRow">
+          <th style="width: 95px;">Team</th>
+          <th class="frame">1</th>
+          <th class="frame runs-header">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td id="t1RowName" style="font-weight: bold; text-align: left; padding-left: 6px;">Team 1</td>
+          <td id="t1_r_0" class="score-cell" onclick="manualEditRoundScore(1, 0)">0</td>
+          <td id="t1TotalCell" class="runs-cell">0</td>
+        </tr>
+        <tr>
+          <td id="t2RowName" style="font-weight: bold; text-align: left; padding-left: 6px;">Team 2</td>
+          <td id="t2_r_0" class="score-cell" onclick="manualEditRoundScore(2, 0)">0</td>
+          <td id="t2TotalCell" class="runs-cell">0</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Global Controls -->
+    <div class="global-controls">
+      <button class="global-btn" onclick="undoAction()">Undo</button>
+      <button class="global-btn" style="background: #16a34a;" onclick="nextRound()">Next Round</button>
+      <button class="global-btn" style="background: #991b1b;" onclick="resetGame()">Reset</button>
+    </div>
+
+    <script>
+      let gameState = {
+        round: 1,
+        maxRoundDisplayed: 1,
+        bustScore: 13,
+        team1: { bags: ['miss', 'miss', 'miss', 'miss'], roundScores: [0] },
+        team2: { bags: ['miss', 'miss', 'miss', 'miss'], roundScores: [0] }
+      };
+
+      let historyStack = [];
+
+      function saveStateSnapshot() {
+        historyStack.push(JSON.parse(JSON.stringify(gameState)));
+      }
+
+      function undoAction() {
+        if (historyStack.length === 0) return;
+        gameState = historyStack.pop();
+        rebuildTableStructure();
+        render();
+      }
+
+      function resetGame() {
+        if (!confirm("Are you sure you want to reset the cornhole game?")) return;
+        saveStateSnapshot();
+        const currentBust = gameState.bustScore;
+        gameState = {
+          round: 1,
+          maxRoundDisplayed: 1,
+          bustScore: currentBust,
+          team1: { bags: ['miss', 'miss', 'miss', 'miss'], roundScores: [0] },
+          team2: { bags: ['miss', 'miss', 'miss', 'miss'], roundScores: [0] }
+        };
+        rebuildTableStructure();
+        render();
+      }
+
+      function manualEditRound() {
+        const val = prompt("Enter round number:", gameState.round);
+        if (val === null) return;
+        const r = parseInt(val.trim(), 10);
+        if (!isNaN(r) && r >= 1) {
+          saveStateSnapshot();
+          gameState.round = r;
+          if (r > gameState.maxRoundDisplayed) {
+            gameState.maxRoundDisplayed = r;
+            while (gameState.team1.roundScores.length < r) gameState.team1.roundScores.push(0);
+            while (gameState.team2.roundScores.length < r) gameState.team2.roundScores.push(0);
+            rebuildTableStructure();
+          }
+          render();
+        } else {
+          alert("Invalid round number.");
+        }
+      }
+
+      function manualEditBust() {
+        const val = prompt("Enter the score to reset to when busting over 21 (e.g., 13):", gameState.bustScore);
+        if (val === null) return;
+        const b = parseInt(val.trim(), 10);
+        saveStateSnapshot();
+        gameState.bustScore = isNaN(b) ? 13 : b;
+        render();
+      }
+
+      function manualEditRoundScore(teamNum, roundIndex) {
+        const teamObj = teamNum === 1 ? gameState.team1 : gameState.team2;
+        const currentVal = teamObj.roundScores[roundIndex] || 0;
+        const name = document.getElementById(`team${teamNum}Name`).value || `Team ${teamNum}`;
+        const val = prompt(`Enter score for ${name} in Round ${roundIndex + 1}:`, currentVal);
+        if (val === null) return;
+        const score = parseInt(val.trim(), 10);
+        if (!isNaN(score)) {
+          saveStateSnapshot();
+          teamObj.roundScores[roundIndex] = score;
+          checkBustAfterScoreChange();
+          render();
+        } else {
+          alert("Please enter a valid number.");
+        }
+      }
+
+      function toggleBag(teamNum, bagIndex) {
+        saveStateSnapshot();
+        const teamObj = teamNum === 1 ? gameState.team1 : gameState.team2;
+        const currentStatus = teamObj.bags[bagIndex];
+
+        // Cycle: miss -> board -> hole -> miss
+        if (currentStatus === 'miss') {
+          teamObj.bags[bagIndex] = 'board';
+        } else if (currentStatus === 'board') {
+          teamObj.bags[bagIndex] = 'hole';
+        } else {
+          teamObj.bags[bagIndex] = 'miss';
+        }
+
+        updateLiveTableRoundScores();
+        render();
+      }
+
+      function calculateRawScore(bags) {
+        let raw = 0;
+        bags.forEach(status => {
+          if (status === 'hole') raw += 3;
+          else if (status === 'board') raw += 1;
+        });
+        return raw;
+      }
+
+      function calculateLiveRoundNet() {
+        const t1Raw = calculateRawScore(gameState.team1.bags);
+        const t2Raw = calculateRawScore(gameState.team2.bags);
+        let t1Net = 0, t2Net = 0;
+        if (t1Raw > t2Raw) t1Net = t1Raw - t2Raw;
+        else if (t2Raw > t1Raw) t2Net = t2Raw - t1Raw;
+        return { t1Net, t2Net };
+      }
+
+      function updateLiveTableRoundScores() {
+        const rIdx = gameState.round - 1;
+        const live = calculateLiveRoundNet();
+        gameState.team1.roundScores[rIdx] = live.t1Net;
+        gameState.team2.roundScores[rIdx] = live.t2Net;
+      }
+
+      function applyBustRules(rIdx) {
+        checkTeamBust(gameState.team1, rIdx);
+        checkTeamBust(gameState.team2, rIdx);
+      }
+
+      function checkTeamBust(teamObj, rIdx) {
+        let runningTotal = 0;
+        for (let i = 0; i <= rIdx; i++) {
+          runningTotal += Number(teamObj.roundScores[i]) || 0;
+        }
+
+        if (runningTotal > 21) {
+          let previousTotal = runningTotal - (Number(teamObj.roundScores[rIdx]) || 0);
+          let targetRoundScore = gameState.bustScore - previousTotal;
+          teamObj.roundScores[rIdx] = targetRoundScore;
+        }
+      }
+
+      function checkBustAfterScoreChange() {
+        for (let r = 0; r < gameState.maxRoundDisplayed; r++) {
+          checkTeamBust(gameState.team1, r);
+          checkTeamBust(gameState.team2, r);
+        }
+      }
+
+      function nextRound() {
+        saveStateSnapshot();
+        const rIdx = gameState.round - 1;
+        updateLiveTableRoundScores();
+        applyBustRules(rIdx);
+
+        gameState.round++;
+        if (gameState.round > gameState.maxRoundDisplayed) {
+          gameState.maxRoundDisplayed = gameState.round;
+          gameState.team1.roundScores.push(0);
+          gameState.team2.roundScores.push(0);
+          rebuildTableStructure();
+        }
+
+        gameState.team1.bags = ['miss', 'miss', 'miss', 'miss'];
+        gameState.team2.bags = ['miss', 'miss', 'miss', 'miss'];
+        render();
+      }
+
+      function renderBagGrid(teamNum) {
+        const container = document.getElementById(`team${teamNum}BagsGrid`);
+        container.innerHTML = '';
+        const teamObj = teamNum === 1 ? gameState.team1 : gameState.team2;
+
+        for (let i = 0; i < 4; i++) {
+          const col = document.createElement('div');
+          col.className = 'bag-column';
+
+          const numLbl = document.createElement('div');
+          numLbl.className = 'bag-label-num';
+          numLbl.textContent = `#${i + 1}`;
+          col.appendChild(numLbl);
+
+          const btn = document.createElement('button');
+          const status = teamObj.bags[i];
+          btn.className = `bag-btn status-${status}`;
+          
+          if (status === 'hole') btn.textContent = 'Hole (3)';
+          else if (status === 'board') btn.textContent = 'Board (1)';
+          else btn.textContent = 'Miss';
+
+          btn.onclick = () => toggleBag(teamNum, i);
+          col.appendChild(btn);
+
+          container.appendChild(col);
+        }
+      }
+
+      function rebuildTableStructure() {
+        const headerRow = document.getElementById('headerRow');
+        headerRow.innerHTML = `<th style="width: 95px;">Team</th>`;
+        for (let i = 1; i <= gameState.maxRoundDisplayed; i++) {
+          const th = document.createElement('th');
+          th.className = 'frame';
+          th.textContent = i;
+          headerRow.appendChild(th);
+        }
+        const thTotal = document.createElement('th');
+        thTotal.className = 'frame runs-header';
+        thTotal.textContent = 'Total';
+        headerRow.appendChild(thTotal);
+
+        rebuildTeamRow(1);
+        rebuildTeamRow(2);
+      }
+
+      function rebuildTeamRow(teamNum) {
+        const tbody = document.getElementById('scoreTable').querySelector('tbody');
+        const rowIndex = teamNum - 1;
+        const row = tbody.rows[rowIndex];
+        row.innerHTML = '';
+
+        const nameInputVal = document.getElementById(`team${teamNum}Name`)?.value || `Team ${teamNum}`;
+        const nameTd = document.createElement('td');
+        nameTd.style.fontWeight = 'bold';
+        nameTd.style.textAlign = 'left';
+        nameTd.style.paddingLeft = '6px';
+        
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'input-team-title';
+        input.value = nameInputVal;
+        input.id = `team${teamNum}Name`;
+        input.style.margin = '0';
+        input.style.border = 'none';
+        input.oninput = () => {
+          document.getElementById(`t${teamNum}RowName`).textContent = input.value;
+        };
+        nameTd.appendChild(input);
+        row.appendChild(nameTd);
+
+        const teamObj = teamNum === 1 ? gameState.team1 : gameState.team2;
+        for (let i = 0; i < gameState.maxRoundDisplayed; i++) {
+          const td = document.createElement('td');
+          td.id = `t${teamNum}_r_${i}`;
+          td.className = 'score-cell';
+          td.textContent = teamObj.roundScores[i] !== undefined ? teamObj.roundScores[i] : 0;
+          td.onclick = () => manualEditRoundScore(teamNum, i);
+          row.appendChild(td);
+        }
+
+        const total = teamObj.roundScores.reduce((a, b) => Number(a) + (Number(b) || 0), 0);
+        const tdTotal = document.createElement('td');
+        tdTotal.className = 'runs-cell';
+        tdTotal.id = `t${teamNum}TotalCell`;
+        tdTotal.textContent = total;
+        row.appendChild(tdTotal);
+      }
+
+      function render() {
+        document.getElementById('displayRound').textContent = `Round ${gameState.round}`;
+        document.getElementById('displayBust').textContent = gameState.bustScore;
+
+        const live = calculateLiveRoundNet();
+        document.getElementById('team1RoundScore').textContent = live.t1Net;
+        document.getElementById('team2RoundScore').textContent = live.t2Net;
+
+        renderBagGrid(1);
+        renderBagGrid(2);
+
+        const t1Scores = gameState.team1.roundScores;
+        const t2Scores = gameState.team2.roundScores;
+
+        const t1Total = t1Scores.reduce((a, b) => Number(a) + (Number(b) || 0), 0);
+        const t2Total = t2Scores.reduce((a, b) => Number(a) + (Number(b) || 0), 0);
+
+        document.getElementById('t1TotalCell').textContent = t1Total;
+        document.getElementById('t2TotalCell').textContent = t2Total;
+
+        for (let i = 0; i < gameState.maxRoundDisplayed; i++) {
+          const t1Cell = document.getElementById(`t1_r_${i}`);
+          const t2Cell = document.getElementById(`t2_r_${i}`);
+
+          if (t1Cell) {
+            t1Cell.textContent = t1Scores[i] !== undefined ? t1Scores[i] : 0;
+            t1Cell.classList.toggle('current-round', i === gameState.round - 1);
+          }
+          if (t2Cell) {
+            t2Cell.textContent = t2Scores[i] !== undefined ? t2Scores[i] : 0;
+            t2Cell.classList.toggle('current-round', i === gameState.round - 1);
+          }
+        }
+      }
+
+      window.addEventListener('DOMContentLoaded', () => {
+        rebuildTableStructure();
+        render();
+      });
+    </script>
+  </body>
+</html>
