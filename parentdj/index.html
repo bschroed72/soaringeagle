@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ParentDJ - Youth Sports DJ & Arena Soundboard App</title>
+    <meta name="description" content="ParentDJ is the ultimate sports DJ app for parents, coaches, and team managers playing music at youth sports games. Single-tap soundboard, Apple Music, Spotify, Box sync, and Live PA Mic.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #7C4DFF;
+            --primary-dark: #651FFF;
+            --secondary: #00E676;
+            --dark-bg: #0F0C20;
+            --card-bg: #1A1633;
+            --text-light: #F3F0FF;
+            --text-dim: #A8A2C2;
+            --apple-red: #FA2D48;
+            --spotify-green: #1DB954;
+            --gold: #FFD700;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, rgba(124, 77, 255, 0.2) 0%, rgba(15, 12, 32, 0.9) 100%);
+            padding: 2rem 1.5rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            box-shadow: 0 4px 12px rgba(124, 77, 255, 0.4);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: #fff;
+        }
+
+        .hero {
+            padding: 3rem 0 5rem;
+            text-align: center;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(124, 77, 255, 0.15);
+            color: #B388FF;
+            border: 1px solid rgba(179, 136, 255, 0.3);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #FFFFFF 0%, #D1C4E9 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-dim);
+            max-width: 700px;
+            margin: 0 auto 2.5rem;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: #fff;
+            box-shadow: 0 4px 20px rgba(124, 77, 255, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(124, 77, 255, 0.6);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 4rem 0;
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 2rem;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(124, 77, 255, 0.4);
+        }
+
+        .feature-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            margin-bottom: 1.25rem;
+            background: rgba(124, 77, 255, 0.12);
+            color: #B388FF;
+        }
+
+        .feature-card h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: #fff;
+        }
+
+        .feature-card p {
+            color: var(--text-dim);
+            font-size: 0.95rem;
+        }
+
+        .integrations {
+            background: rgba(255, 255, 255, 0.02);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 4rem 0;
+            text-align: center;
+        }
+
+        .integration-badges {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .int-pill {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .int-pill.apple { border-color: rgba(250, 45, 72, 0.4); color: var(--apple-red); }
+        .int-pill.spotify { border-color: rgba(29, 185, 84, 0.4); color: var(--spotify-green); }
+        .int-pill.box { border-color: rgba(0, 97, 214, 0.4); color: #0061D6; }
+
+        .pro-section {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(26, 22, 51, 1) 100%);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 24px;
+            padding: 3rem;
+            margin: 4rem 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .pro-content h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--gold);
+            margin-bottom: 0.5rem;
+        }
+
+        .pro-content p {
+            color: var(--text-light);
+            font-size: 1.1rem;
+            max-width: 600px;
+        }
+
+        .download-section {
+            padding: 4rem 0;
+            text-align: center;
+            background: var(--card-bg);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .download-section h2 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+
+        footer {
+            background: #090714;
+            padding: 3rem 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .footer-links a {
+            color: var(--text-dim);
+            text-decoration: none;
+            margin-left: 1.5rem;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: #fff;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.2rem; }
+            .hero p { font-size: 1.05rem; }
+            .pro-section { padding: 2rem; text-align: center; justify-content: center; }
+            .footer-content { flex-direction: column; text-align: center; }
+            .footer-links a { margin: 0 0.75rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <nav>
+                <a href="#" class="logo">
+                    <div class="logo-icon">🎵</div>
+                    ParentDJ
+                </a>
+                <div class="nav-links">
+                    <a href="#features">Features</a>
+                    <a href="#integrations">Integrations</a>
+                    <a href="#pro">ParentDJ Pro</a>
+                    <a href="privacy_policy.html">Privacy Policy</a>
+                </div>
+            </nav>
+
+            <div class="hero">
+                <div class="badge">🔥 Ultimate Youth Sports Audio Soundboard</div>
+                <h1>Run Game Day Music Like a Pro DJ</h1>
+                <p>Designed specifically for parents, coaches, and team managers. Instant 1-tap playback for warmups, goal horns, penalty tunes, and intermissions on any phone or tablet.</p>
+                <div class="cta-buttons">
+                    <a href="#download" class="btn btn-primary">
+                        <span>📲</span> Download App
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section id="features" class="container">
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">⚡️</div>
+                <h3>1-Tap Arena Soundboard</h3>
+                <p>Trigger warm-up playlists, goal celebration songs, and penalty audio instantly with single-tap folder cards designed for fast game-day action.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎛️</div>
+                <h3>Custom Start Offsets</h3>
+                <p>Skip long song intros or spoken dialog. Set custom start offsets per track to start playback right at the chorus where the excitement happens.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">☁️</div>
+                <h3>Box Cloud Sync</h3>
+                <p>Automatically synchronize music folders, MP3s, card colors, and settings between your iPad, Android tablet, and phone using Box Cloud Storage.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎙️</div>
+                <h3>Live PA Microphone</h3>
+                <p>Stream live announcements directly through venue speakers or Bluetooth sound systems while background music continues seamlessly.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔊</div>
+                <h3>Loudness Normalization</h3>
+                <p>Normalize MP3 volume levels across tracks so quieter audio files automatically match studio stream loudness during live sports games.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎨</div>
+                <h3>Custom Folder Colors</h3>
+                <p>Personalize folder button cards with custom team colors for instant visual identification on crowded arena sidelines.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="integrations" class="integrations">
+        <div class="container">
+            <h2>Seamless Streaming Integrations</h2>
+            <p style="color: var(--text-dim); max-width: 600px; margin: 0.5rem auto 0;">Mix local MP3s and streaming tracks together in the exact same folder cards.</p>
+            <div class="integration-badges">
+                <div class="int-pill apple">
+                    <span>🍎</span> Apple Music
+                </div>
+                <div class="int-pill box">
+                    <span>📦</span> Box Cloud Storage
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="pro" class="container">
+        <div class="pro-section">
+            <div class="pro-content">
+                <h2>Unlock ParentDJ Pro ($9.99 Lifetime)</h2>
+                <p>Upgrade once to unlock unlimited streaming track links per folder card, uncapped Live PA Microphone announcements, and full cross-device access on iOS and Android.</p>
+            </div>
+            <a href="#download" class="btn btn-primary" style="background: vaSpotifyr(--gold); color: #000; font-weight: 800;">
+                Upgrade for $9.99
+            </a>
+        </div>
+    </section>
+
+    <section id="download" class="download-section">
+        <div class="container">
+            <h2>Get ParentDJ Today</h2>
+            <p style="color: var(--text-dim); margin-bottom: 2rem;">Available now for iOS, iPadOS, and Android devices.</p>
+            <div class="cta-buttons">
+                <a href="https://apps.apple.com/app/parentdj" class="btn btn-primary" target="_blank">
+                    <span>🍎</span> Apple App Store
+                </a>
+                <a href="https://play.google.com/store/apps/details?id=app.soaringeagle.parentdj" class="btn btn-secondary" target="_blank">
+                    <span>🤖</span> Google Play Store
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container footer-content">
+            <div>
+                <p>&copy; 2026 Soaring Eagle Apps / ParentDJ. All rights reserved.</p>
+            </div>
+            <div class="footer-links">
+                <a href="privacy_policy.html">Privacy Policy</a>
+                <a href="mailto:support@soaringeagle.app">Support Contact</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

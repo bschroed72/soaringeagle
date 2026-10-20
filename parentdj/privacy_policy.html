@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - ParentDJ</title>
+    <meta name="description" content="Privacy Policy for ParentDJ application - Information regarding data collection, permissions, and third-party integrations.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #7C4DFF;
+            --dark-bg: #0F0C20;
+            --card-bg: #1A1633;
+            --text-light: #F3F0FF;
+            --text-dim: #A8A2C2;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--text-light);
+            line-height: 1.7;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 3rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .header {
+            margin-bottom: 2.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 1.5rem;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 0.5rem;
+        }
+
+        .effective-date {
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        h2 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #fff;
+            margin: 2rem 0 1rem;
+        }
+
+        p {
+            color: var(--text-dim);
+            margin-bottom: 1rem;
+        }
+
+        ul {
+            margin: 0.5rem 0 1.5rem 1.5rem;
+            color: var(--text-dim);
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        a {
+            color: #B388FF;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .footer {
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1>Privacy Policy for ParentDJ</h1>
+            <p class="effective-date">Effective Date: April 1, 2026</p>
+        </div>
+
+        <p>This Privacy Policy describes how <strong>ParentDJ</strong> ("we", "us", or "our") handles information when you use our mobile application (the "App") on Android and iOS devices.</p>
+
+        <h2>1. Overview & Information Collection</h2>
+        <p>ParentDJ is designed to respect your privacy. We do not require you to create a personal user account or provide personally identifiable information (such as your full name, physical address, or phone number) to use the App.</p>
+
+        <h2>2. Data Stored Locally & Cloud Synchronization</h2>
+        <ul>
+            <li><strong>Local Audio Files & Settings:</strong> Audio files, folder configurations, button colors, and custom track settings remain stored locally on your device.</li>
+            <li><strong>Cloud Storage Sync (Box):</strong> If you choose to connect Box Cloud Storage, ParentDJ uses standard OAuth2 authentication to synchronize folder settings and config files directly between your device and your personal Box account. We do not host or inspect your personal cloud storage data.</li>
+        </ul>
+
+        <h2>3. Device Identifiers & Analytics</h2>
+        <ul>
+            <li><strong>Anonymous Installation ID (Google Cloud Firestore):</strong> ParentDJ generates an anonymous, hardware-based installation ID (e.g. device model and unique hash) saved in Firebase Firestore. This is used solely to manage feature toggles (such as Spotify/Apple Music access) and track active device timestamps.</li>
+            <li><strong>Crash Reporting (Firebase Crashlytics):</strong> In the event of an app crash, anonymous diagnostic logs and stack traces are collected by Firebase Crashlytics to help us identify and resolve bugs.</li>
+        </ul>
+
+        <h2>4. Device Permissions</h2>
+        <ul>
+            <li><strong>Microphone Permission:</strong> Used exclusively for real-time live PA microphone announcements over venue speakers or Bluetooth output. All audio processing occurs in real time in device memory; no audio recordings are ever stored or transmitted.</li>
+            <li><strong>Storage & Photo Library Permission:</strong> Used to access local music files in your device's music folder and to select custom artwork background images for folder cards.</li>
+        </ul>
+
+        <h2>5. Third-Party Services & Streaming</h2>
+        <p>If you choose to use optional third-party integrations, the App interacts with:</p>
+        <ul>
+            <li><strong>Apple Music (Apple Inc.):</strong> Authentication uses standard iOS/Android MusicKit SDKs. Stream playback and license requests are handled securely by Apple.</li>
+            <li><strong>Spotify (Spotify AB):</strong> Authentication uses Spotify OAuth2 web login. Playback is controlled via Spotify App Remote / REST APIs.</li>
+            <li><strong>In-App Purchases (Google Play Billing & Apple App Store):</strong> Upgrading to ParentDJ Pro ($9.99 One-Time Lifetime) is processed securely by Google Play Billing or Apple App Store Connect. ParentDJ does not store or handle credit card details.</li>
+        </ul>
+
+        <h2>6. Children's Privacy</h2>
+        <p>ParentDJ is intended for parents, sports coaches, and adult team managers (ages 13+). We do not knowingly collect or solicit personal information from children under the age of 13.</p>
+
+        <h2>7. Changes to This Privacy Policy</h2>
+        <p>We may update this Privacy Policy from time to time. Any updates will be posted on this page with a revised effective date.</p>
+
+        <h2>8. Contact Us</h2>
+        <p>If you have any questions or concerns regarding this Privacy Policy, please contact us at:</p>
+        <p><strong>Email:</strong> <a href="mailto:support@soaringeagle.app">support@soaringeagle.app</a><br>
+        <strong>Website:</strong> <a href="index.html">ParentDJ Product Page</a></p>
+
+        <div class="footer">
+            <p>&copy; 2026 Soaring Eagle Apps / ParentDJ. All rights reserved.</p>
+        </div>
+    </div>
+
+</body>
+</html>
