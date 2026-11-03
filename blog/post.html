@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loading Article...</title>
+    <meta id="meta-description" name="description" content="">
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/blog">Blog</a>
+    </nav>
+
+    <main>
+        <article id="article-wrapper">
+            <h1 id="article-title"></h1>
+            <div id="article-meta" style="margin-bottom: 2rem; color: #666;"></div>
+            
+            <!-- Table of contents will render here if headings exist -->
+            <div id="table-of-contents" style="margin-bottom: 2rem; display: none;">
+                <h2>Table of Contents</h2>
+                <ul id="toc-list"></ul>
+            </div>
+
+            <div id="article-body">Loading...</div>
+        </article>
+    </main>
+
+    <!-- DOMPurify for secure sanitization -->
+    <script src="https://cloudflare.com"></script>
+    <script>
+        const HEYCATCH_API_KEY = 'hck_lv_16bea82a294f36714b648a4a';
+        const API_BASE = 'https://api.heycatch.ai/v1';
+
+        function getSlugFromUrl() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('slug');
+        }
+
+        async function fetchArticle() {
+            const slug = getSlugFromUrl();
+            if (!slug) {
+                render404();
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/articles/${encodeURIComponent(slug)}?key=${HEYCATCH_API_KEY}`);
+                if (response.status === 404) {
+                    render404();
+                    return;
+                }
+                if (!response.ok) throw new Error(`API Error: ${response.status}`);
+
+                const data = await response.json();
+                renderArticle(data.article);
+            } catch (error) {
+                console.error(error);
+                document.getElementById('article-body').innerText = "Failed to load article.";
+            }
+        }
+
+        function renderArticle(article) {
+            // Set dynamic language profile attributes if needed
+            const wrapper = document.getElementById('article-wrapper');
+            if (article.language) {
+                wrapper.setAttribute('lang', article.language);
+                if (['ar', 'he', 'fa', 'ur'].includes(article.language)) {
+                    wrapper.setAttribute('dir', 'rtl');
+                }
+            }
+
+            // Client-side SEO update
+            document.title = article.title;
+            document.getElementById('meta-description').setAttribute('content', article.meta_description);
+
+            // Render main title and sub-header details
+            document.getElementById('article-title').innerText = article.title;
+            const date = new Date(article.published_at).toLocaleDateString(undefined, {
+                year: 'numeric', month: 'long', day: 'numeric'
+            });
+            document.getElementById('article-meta').innerText = `Published on ${date} • ${article.read_time} min read`;
+
+            // Sanitize HTML safely, keeping necessary id attributes intact
+            const cleanHtml = DOMPurify.sanitize(article.content_html, {
+                ALLOWED_TAGS: ['h2', 'h3', 'p', 'ul', 'ol', 'li', 'table', 'thead', 'tbody', 'tr', 'th', 'td', 'blockquote', 'a', 'strong', 'em', 'code'],
+                ALLOWED_ATTR: ['id', 'href', 'target']
+            });
+
+            // Parse clean HTML fragment to programmatically discover H2 items for Table of Contents
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = cleanHtml;
+            const headings = tempDiv.querySelectorAll('h2');
+            const tocList = document.getElementById('toc-list');
+            let hasTocHeadings = false;
+
+            headings.forEach(heading => {
+                const id = heading.getAttribute('id');
+                const text = heading.textContent;
+                
+                // Exclude 'Key takeaways' or sections matching 'faq' as per layout rules
+                if (id && id !== 'faq' && text.toLowerCase() !== 'key takeaways') {
+                    hasTocHeadings = true;
+                    const li = document.createElement('li');
+                    li.innerHTML = `<a href="#${id}">${text}</a>`;
+                    tocList.appendChild(li);
+                }
+            });
+
+            // Insert Table of Contents if headings qualify
+            if (hasTocHeadings) {
+                document.getElementById('table-of-contents').style.display = 'block';
+            }
+
+            // Set final article body markup
+            document.getElementById('article-body').innerHTML = cleanHtml;
+
+            // Handle optional JSON-LD structured schema parsing
+            if (article.jsonLd && Object.keys(article.jsonLd).length > 0) {
+                const schema = { ...article.jsonLd };
+                schema.url = window.location.href;
+                schema.mainEntityOfPage = window.location.href;
+
+                const script = document.createElement('script');
+                script.type = 'application/ld+json';
+                script.text = JSON.stringify(schema).replace(/</g, '\\u003c');
+                document.head.appendChild(script);
+            }
+        }
+
+        function render404() {
+            document.title = "404 - Not Found";
+            document.getElementById('article-title').innerText = "404 Page Not Found";
+            document.getElementById('article-body').innerText = "The article you are looking for does not exist.";
+        }
+
+        fetchArticle();
+    </script>
+</body>
+</html>
