@@ -7,6 +7,16 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script type="module">
+        import { analytics } from 'https://esm.sh/@heycatch/sdk';
+        analytics.init({
+            projectKey: 'hck_pk_iwSl60yCcQF099GYfK8Ro9qGjXMxPqYf',
+            install: {
+                framework: 'web',
+                agent: 'claude-code',
+            },
+        });
+    </script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
