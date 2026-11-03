@@ -228,6 +228,103 @@
             border-color: rgba(124, 77, 255, 0.4);
         }
 
+        /* Lightbox Modal Styles */
+        .screenshot-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 12, 32, 0.85);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+            padding: 1.5rem;
+        }
+
+        .screenshot-modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .screenshot-modal-content {
+            background: var(--card-bg);
+            border: 1px solid rgba(124, 77, 255, 0.4);
+            border-radius: 24px;
+            padding: 2rem;
+            max-width: 900px;
+            width: 95%;
+            max-height: 90vh;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .screenshot-modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1.25rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #fff;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.3rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+            z-index: 10;
+        }
+
+        .screenshot-modal-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .screenshot-modal-body {
+            flex: 1;
+            background: rgba(15, 12, 32, 0.8);
+            border: 2px dashed rgba(179, 136, 255, 0.4);
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-dim);
+            font-size: 1.1rem;
+            gap: 12px;
+            margin-top: 1rem;
+            padding: 1.5rem;
+            overflow-y: auto;
+            max-height: 70vh;
+            box-sizing: border-box;
+        }
+
+        .screenshot-modal-body img {
+            width: 100%;
+            height: auto;
+            max-height: 65vh;
+            object-fit: contain;
+            border-radius: 12px;
+        }
+
+        .screenshot-modal-body .feature-screenshot {
+            height: auto !important;
+            max-height: none !important;
+            min-height: 250px;
+            font-size: 1.1rem !important;
+        }
+
         .feature-screenshot {
             width: 100%;
             height: 200px;
@@ -247,6 +344,13 @@
             padding: 1rem;
             overflow: hidden;
             box-sizing: border-box;
+            cursor: pointer;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .feature-screenshot:hover {
+            border-color: var(--primary);
+            transform: scale(1.02);
         }
 
         .feature-screenshot img {
@@ -562,6 +666,62 @@
             </div>
         </div>
     </footer>
+
+    <!-- Lightbox Modal -->
+    <div id="screenshotModal" class="screenshot-modal">
+        <div class="screenshot-modal-content">
+            <button id="modalCloseBtn" class="screenshot-modal-close">&times;</button>
+            <h3 id="modalTitle" style="color: #fff; font-size: 1.4rem; font-weight: 700; margin-bottom: 0.5rem;">App Screenshot</h3>
+            <div id="modalBody" class="screenshot-modal-body">
+                <!-- Expanded image or placeholder content will be injected here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const modal = document.getElementById('screenshotModal');
+            const modalBody = document.getElementById('modalBody');
+            const modalTitle = document.getElementById('modalTitle');
+            const closeBtn = document.getElementById('modalCloseBtn');
+            const screenshots = document.querySelectorAll('.feature-screenshot');
+
+            screenshots.forEach(sc => {
+                sc.addEventListener('click', () => {
+                    const titleElem = sc.closest('.feature-card').querySelector('h3');
+                    modalTitle.textContent = titleElem ? titleElem.textContent : 'App Screenshot';
+                    
+                    // Clone content of the screenshot box into the modal
+                    modalBody.innerHTML = '';
+                    const clone = sc.cloneNode(true);
+                    clone.style.height = 'auto';
+                    clone.style.maxHeight = 'none';
+                    clone.style.cursor = 'default';
+                    clone.style.border = 'none';
+                    clone.style.background = 'transparent';
+                    modalBody.appendChild(clone);
+
+                    modal.classList.add('active');
+                });
+            });
+
+            const closeModal = () => {
+                modal.classList.remove('active');
+            };
+
+            closeBtn.addEventListener('click', closeModal);
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    closeModal();
+                }
+            });
+        });
+    </script>
 
 </body>
 </html>
