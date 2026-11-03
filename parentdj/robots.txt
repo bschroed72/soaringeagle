@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /parentdj/
+
+Sitemap: https://soaringeagle.app/parentdj/sitemap.xml

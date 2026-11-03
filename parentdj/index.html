@@ -8,6 +8,16 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script type="module">
+        import { analytics } from 'https://esm.sh/@heycatch/sdk';
+        analytics.init({
+            projectKey: 'hck_pk_iwSl60yCcQF099GYfK8Ro9qGjXMxPqYf',
+            install: {
+                framework: 'web',
+                agent: 'claude-code',
+            },
+        });
+    </script>
     <style>
         :root {
             --primary: #7C4DFF;
@@ -119,6 +129,7 @@
             line-height: 1.2;
             margin-bottom: 1.5rem;
             background: linear-gradient(135deg, #FFFFFF 0%, #D1C4E9 100%);
+            background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -321,6 +332,8 @@
             h1 { font-size: 2.2rem; }
             .hero p { font-size: 1.05rem; }
             .pro-section { padding: 2rem; text-align: center; justify-content: center; }
+            .founder-card { flex-direction: column; text-align: center; justify-content: center; }
+            .founder-photo-placeholder { margin: 0 auto; }
             .footer-content { flex-direction: column; text-align: center; }
             .footer-links a { margin: 0 0.75rem; }
         }
@@ -352,6 +365,7 @@
                         <span>📲</span> Join the Beta Test
                     </a>
                 </div>
+                <p style="color: var(--text-dim); font-size: 0.95rem; margin-top: 1.25rem;">Free device lifetime access for everyone in the beta. No credit card, no upgrade pop-ups.</p>
             </div>
         </div>
     </header>
@@ -410,9 +424,10 @@
         <div class="pro-section">
             <div class="pro-content">
                 <h2>Unlock ParentDJ Pro ($9.99 Lifetime)</h2>
-                <p>Upgrade once to unlock unlimited streaming track links per folder card, uncapped Live PA Microphone announcements, and unlimited access across devices (iOS and Android require a separate subscription)..</p>
+                <p>Upgrade once per device type (iOS, Android) to unlock unlimited streaming track links per folder card, uncapped Live PA Microphone announcements, and unlimited access across same platform devices (iOS and Android require a separate subscription).</p>
+                <p style="color: var(--gold); font-size: 0.95rem; font-weight: 600; margin-top: 0.75rem;">Free device lifetime access for everyone in the beta. No credit card, no upgrade pop-ups.</p>
             </div>
-            <a href="#download" class="btn btn-primary" style="background: vaSpotifyr(--gold); color: #000; font-weight: 800;">
+            <a href="#download" class="btn btn-primary" style="background: var(--gold); color: #000; font-weight: 800;">
                 Upgrade for $9.99
             </a>
         </div>
@@ -421,7 +436,7 @@
     <section id="download" class="download-section">
         <div class="container">
             <h2>Get ParentDJ Today</h2>
-            <p style="color: var(--text-dim); margin-bottom: 2rem;">Available now for iOS, iPadOS, and Android devices.</p>
+            <p style="color: var(--text-dim); margin-bottom: 2rem;">Now in Open Beta for iOS, iPadOS, and Android devices.</p>
             <div class="cta-buttons">
                 <a href="https://testflight.apple.com/join/1aWnub3C" class="btn btn-primary" target="_blank">
                     <span>🍎</span> Apple TestFlight
@@ -429,6 +444,21 @@
                 <a href="https://play.google.com/store/apps/details?id=app.soaringeagle.parentdj" class="btn btn-secondary" target="_blank">
                     <span>🤖</span> Google Play Store
                 </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="container" style="padding: 4rem 0;">
+        <div class="founder-card" style="background: var(--card-bg); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 24px; padding: 3rem; display: flex; align-items: center; gap: 2.5rem; flex-wrap: wrap;">
+            <div class="founder-photo-placeholder" style="width: 120px; height: 120px; border-radius: 50%; background: rgba(124, 77, 255, 0.2); border: 2px dashed rgba(179, 136, 255, 0.5); display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--text-dim); font-size: 0.85rem; text-align: center; padding: 10px;">
+                Photo Placeholder
+            </div>
+            <div class="founder-content" style="flex: 1; min-width: 280px;">
+                <div class="badge" style="margin-bottom: 0.75rem;">Meet the Creator</div>
+                <h3 style="font-size: 1.8rem; font-weight: 800; color: #fff; margin-bottom: 0.75rem;">Brian Schroeder</h3>
+                <p style="color: var(--text-dim); font-size: 1.05rem; line-height: 1.7;">
+                    "I ran music for my son's hockey team for years, and the app I had been using is no longer available or supported, so I decided to build my own and improve on the things I found lacking."
+                </p>
             </div>
         </div>
     </section>
