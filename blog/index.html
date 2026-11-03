@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog</title>
+    <meta name="description" content="Read our latest blog articles.">
+    <!-- Include your existing CSS file here to keep your site's design -->
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        /* Optional minimal styling for the list layout */
+        .blog-list { list-style: none; padding: 0; }
+        .blog-item { margin-bottom: 1.5rem; }
+        .blog-meta { font-size: 0.875rem; color: #666; }
+    </style>
+</head>
+<body>
+    <!-- Include your existing navigation layout here -->
+    <nav>
+        <a href="/">Home</a>
+        <a href="/blog" id="nav-blog-link" style="display: none;">Blog</a>
+    </nav>
+
+    <main>
+        <h1>Latest Articles</h1>
+        <div id="blog-container">Loading articles...</div>
+    </main>
+
+    <script>
+        const HEYCATCH_API_KEY = 'hck_lv_16bea82a294f36714b648a4a';
+        const API_BASE = 'https://heycatch.ai';
+
+        async function fetchAllArticles() {
+            let allArticles = [];
+            let offset = 0;
+            const limit = 50;
+            let hasMore = true;
+
+            try {
+                while (hasMore) {
+                    const response = await fetch(`${API_BASE}/articles?key=${HEYCATCH_API_KEY}&limit=${limit}&offset=${offset}`);
+                    if (!response.ok) throw new Error(`API error: ${response.status}`);
+                    
+                    const data = await response.json();
+                    if (!data.articles || data.articles.length === 0) break;
+                    
+                    allArticles = allArticles.concat(data.articles);
+                    offset += limit;
+                    
+                    if (allArticles.length >= data.total) {
+                        hasMore = false;
+                    }
+                }
+                renderArticles(allArticles);
+            } catch (error) {
+                console.error("Failed to load blog posts:", error);
+                document.getElementById('blog-container').innerText = "No articles yet";
+            }
+        }
+
+        function renderArticles(articles) {
+            const container = document.getElementById('blog-container');
+            if (articles.length === 0) {
+                container.innerText = "No articles yet";
+                return;
+            }
+
+            // Show blog link in nav since articles exist
+            const navLink = document.getElementById('nav-blog-link');
+            if (navLink) navLink.style.display = 'inline';
+
+            const list = document.createElement('ul');
+            list.className = 'blog-list';
+
+            articles.forEach(article => {
+                const item = document.createElement('li');
+                item.className = 'blog-item';
+                
+                const date = new Date(article.published_at).toLocaleDateString(undefined, {
+                    year: 'numeric', month: 'long', day: 'numeric'
+                });
+
+                item.innerHTML = `
+                    <h2><a href="/blog/post.html?slug=${encodeURIComponent(article.slug)}">${article.title}</a></h2>
+                    <div class="blog-meta">Published on ${date} • ${article.read_time} min read</div>
+                `;
+                list.appendChild(item);
+            });
+
+            container.innerHTML = '';
+            container.appendChild(list);
+        }
+
+        fetchAllArticles();
+    </script>
+</body>
+</html>
