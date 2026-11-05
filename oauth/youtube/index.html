@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ParentDJ Authentication</title>
+</head>
+<body>
+  <h2>Returning to ParentDJ...</h2>
+  <script>
+    // Forward the code parameter back to ParentDJ via custom scheme
+    const params = window.location.search;
+    window.location.href = "parentdj://oauth/youtube" + params;
+  </script>
+</body>
+</html>
