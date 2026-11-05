@@ -41,8 +41,69 @@
     </header>
 
     <!-- Main Content Area -->
-    <main class="w-full max-w-3xl mx-auto px-6 py-12 flex-grow">
-        <div class="bg-zinc-900 border border-zinc-800/80 rounded-2xl shadow-xl p-8 md:p-12 relative overflow-hidden">
+    <main class="w-full max-w-4xl mx-auto px-6 py-12 flex-grow">
+        
+        <!-- Our Flagship Apps Section (Now First & Prominent) -->
+        <section class="mb-12 relative z-10">
+            <div class="mb-6">
+                <h2 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500 tracking-tight flex items-center gap-2">
+                    <span class="w-2 h-6 bg-gradient-to-b from-amber-400 to-amber-600 rounded-full"></span>
+                    Our Flagship Apps
+                </h2>
+                <p class="text-zinc-400 text-sm mt-1">Explore our high-performance mobile applications built for sports, streaming, and entertainment.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- ParentDJ App Card -->
+                <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-xl transition-all hover:border-amber-500/50 hover:shadow-2xl hover:shadow-amber-500/10 flex flex-col justify-between group">
+                    <div>
+                        <div class="flex items-center space-x-4 mb-4">
+                            <img src="parentdj/app_icon.png" alt="ParentDJ App Icon" class="w-16 h-16 object-cover rounded-2xl border border-zinc-700 shadow-lg group-hover:scale-105 transition-transform">
+                            <div>
+                                <span class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 bg-amber-500/10 text-amber-400 rounded-full border border-amber-500/20 inline-block mb-1">iOS & Android</span>
+                                <h3 class="text-lg font-bold text-zinc-100 group-hover:text-amber-300 transition-colors">
+                                    ParentDJ: Fun with Music
+                                </h3>
+                            </div>
+                        </div>
+                        <p class="text-zinc-400 text-xs md:text-sm leading-relaxed mb-6">
+                            An intuitive mobile and tablet audio soundboard application designed specifically for parents, coaches, and team managers running music at youth sports games. Trigger instant 1-tap game-day audio with custom song start offsets, volume gain normalization, live PA microphone announcements, and seamless cross-device synchronization.
+                        </p>
+                    </div>
+                    <div>
+                        <a href="parentdj/index.html" class="inline-flex items-center justify-center w-full text-xs font-semibold bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-zinc-950 px-4 py-3 rounded-xl transition-all shadow-md font-medium">
+                            Explore ParentDJ &rarr;
+                        </a>
+                    </div>
+                </div>
+
+                <!-- LayerLens Live App Card -->
+                <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-xl transition-all hover:border-sky-500/50 hover:shadow-2xl hover:shadow-sky-500/10 flex flex-col justify-between group">
+                    <div>
+                        <div class="flex items-center space-x-4 mb-4">
+                            <img src="layerlenslive/app_icon.png" alt="LayerLens Live App Icon" class="w-16 h-16 object-cover rounded-2xl border border-zinc-700 shadow-lg group-hover:scale-105 transition-transform">
+                            <div>
+                                <span class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 bg-sky-500/10 text-sky-400 rounded-full border border-sky-500/20 inline-block mb-1">Coming Soon</span>
+                                <h3 class="text-lg font-bold text-zinc-100 group-hover:text-sky-300 transition-colors">
+                                    LayerLens Live
+                                </h3>
+                            </div>
+                        </div>
+                        <p class="text-zinc-400 text-xs md:text-sm leading-relaxed mb-6">
+                            A professional mobile and tablet broadcasting application designed for content creators, event organizers, and sports streamers. Capture HD video feeds from external USB webcams or capture cards, overlay interactive web scoreboards, and stream directly to YouTube & Facebook Live.
+                        </p>
+                    </div>
+                    <div>
+                        <a href="layerlenslive/index.html" class="inline-flex items-center justify-center w-full text-xs font-semibold bg-gradient-to-r from-sky-500 to-blue-500 hover:from-sky-600 hover:to-blue-600 text-zinc-950 px-4 py-3 rounded-xl transition-all shadow-md font-medium">
+                            Explore LayerLens Live &rarr;
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Company Information & Contact Card -->
+        <div class="bg-zinc-900 border border-zinc-800/80 rounded-2xl shadow-xl p-8 md:p-10 relative overflow-hidden">
             <!-- Decorative Theme Glow background layer -->
             <div class="absolute -top-24 -right-24 w-48 h-48 bg-sky-500/10 rounded-full blur-3xl pointer-events-none"></div>
             <div class="absolute -bottom-24 -left-24 w-48 h-48 bg-amber-500/5 rounded-full blur-3xl pointer-events-none"></div>
@@ -58,43 +119,7 @@
                 </p>
             </div>
 
-                <!-- Our Apps Section -->
-                <div class="md:col-span-2 pt-6 border-t border-zinc-800/60 mt-2">
-                    <h2 class="text-xl font-bold text-zinc-100 mb-4 flex items-center gap-2">
-                        <span class="w-1.5 h-5 bg-gradient-to-b from-sky-400 to-sky-600 rounded-full"></span>
-                        Our Apps
-                    </h2>
-                    <div class="bg-zinc-950/60 border border-zinc-800/80 rounded-xl p-6 transition-all hover:border-zinc-700/60 shadow-inner group">
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-3">
-                            <h3 class="text-base font-bold text-zinc-200 group-hover:text-amber-300 transition-colors">
-                                ParentDJ: Fun with Music
-                            </h3>
-                        </div>
-                        <p class="text-xs md:text-sm text-zinc-400 leading-relaxed mb-4">
-                            An intuitive mobile and tablet audio soundboard application designed specifically for parents, coaches, and team managers running music at youth sports games. The app's primary purpose is to allow users to trigger instant 1-tap game-day audio—such as warmup playlists, goal horns, penalty tunes, and intermission music—with custom song start offsets, volume gain normalization, live PA microphone announcements, and seamless cross-device synchronization via Box Cloud Storage and Apple Music integrations.
-                        </p>
-                        <a href="parentdj/index.html" class="inline-flex items-center justify-center text-xs font-semibold bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-zinc-950 px-4 py-2 rounded-lg transition-all shadow-md font-medium">
-                            View App Page &rarr;
-                        </a>
-                    </div>
-
-                    <div class="bg-zinc-950/60 border border-zinc-800/80 rounded-xl p-6 transition-all hover:border-zinc-700/60 shadow-inner group">
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-3">
-                            <h3 class="text-base font-bold text-zinc-200 group-hover:text-amber-300 transition-colors">
-                                LayerLens Live: Web & USB Cam (COMING SOON)
-                            </h3>
-                        </div>
-                        <p class="text-xs md:text-sm text-zinc-400 leading-relaxed mb-4">
-                            A professional mobile and tablet broadcasting application designed for content creators, event organizers, and sports streamers. The app's primary purpose is to allow users to capture high-definition video feeds from internal device cameras, external USB UVC webcams, or HDMI capture cards, overlay interactive web graphics (such as live scoreboards), and securely stream the output directly to platforms like YouTube Live and Facebook Live using authorized API integrations.
-                        </p>
-                        <a href="layerlenslive/index.html" class="inline-flex items-center justify-center text-xs font-semibold bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-zinc-950 px-4 py-2 rounded-lg transition-all shadow-md font-medium">
-                            View App Page &rarr;
-                        </a>
-                    </div>
-
-                </div>
-
-                            <!-- Business Details Grid -->
+            <!-- Business Details Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t border-zinc-800/60 relative z-10">
                 
                 <!-- Email Contact -->
