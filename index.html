@@ -6,7 +6,25 @@
     <title>Soaring Eagle Productions, LLC</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="canonical" href="https://soaringeagle.app/">
+    <meta name="description" content="Soaring Eagle Productions builds high-performance mobile apps for sports, streaming, and entertainment, including ParentDJ, LayerLens Live, and sports score sheets.">
+    <meta property="og:title" content="Soaring Eagle Productions, LLC">
+    <meta property="og:description" content="Soaring Eagle Productions builds high-performance mobile apps for sports, streaming, and entertainment, including ParentDJ, LayerLens Live, and sports score sheets.">
+    <meta property="og:image" content="https://soaringeagle.app/logo.png">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Soaring Eagle Productions, LLC",
+      "url": "https://soaringeagle.app/",
+      "logo": "https://soaringeagle.app/logo.png",
+      "sameAs": [
+        "https://www.linkedin.com/company/soaring-eagle-productions",
+        "https://github.com/soaringeagle",
+        "https://x.com/soaringeagleapp"
+      ]
+    }
+    </script>
     <script type="module">
         import { analytics } from 'https://esm.sh/@heycatch/sdk';
         analytics.init({
@@ -30,7 +48,7 @@
         <div class="max-w-4xl mx-auto flex items-center justify-between">
             <div class="flex items-center space-x-5">
                 <!-- Brand Logo Element -->
-                <img src="logo.png" alt="Soaring Eagle Productions Logo" class="w-16 h-16 object-contain rounded-xl border border-zinc-700/50 bg-zinc-950/40 p-0.5 shadow-md">
+                <img src="logo.png" alt="Soaring Eagle Productions Logo" width="64" height="64" class="w-16 h-16 object-contain rounded-xl border border-zinc-700/50 bg-zinc-950/40 p-0.5 shadow-md">
                 <div>
                     <h1 class="text-2xl sm:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500 tracking-tight">
                         Soaring Eagle Productions
@@ -43,22 +61,20 @@
     <!-- Main Content Area -->
     <main class="w-full max-w-4xl mx-auto px-6 py-12 flex-grow">
         
-        <!-- Our Flagship Apps Section (Now First & Prominent) -->
-        <section class="mb-12 relative z-10">
-            <div class="mb-6">
-                <h2 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500 tracking-tight flex items-center gap-2">
-                    <span class="w-2 h-6 bg-gradient-to-b from-amber-400 to-amber-600 rounded-full"></span>
-                    Our Flagship Apps
-                </h2>
-                <p class="text-zinc-400 text-sm mt-1">Explore our high-performance mobile applications built for sports, streaming, and entertainment.</p>
-            </div>
+        <div class="mb-6">
+            <h1 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-500 tracking-tight flex items-center gap-2">
+                <span class="w-2 h-6 bg-gradient-to-b from-amber-400 to-amber-600 rounded-full"></span>
+                Our Flagship Apps
+            </h1>
+            <p class="text-zinc-400 text-sm mt-1">Explore our high-performance mobile applications built for sports, streaming, and entertainment.</p>
+        </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- ParentDJ App Card -->
                 <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-xl transition-all hover:border-amber-500/50 hover:shadow-2xl hover:shadow-amber-500/10 flex flex-col justify-between group">
                     <div>
                         <div class="flex items-center space-x-4 mb-4">
-                            <img src="parentdj/app_icon.png" alt="ParentDJ App Icon" class="w-16 h-16 object-cover rounded-2xl border border-zinc-700 shadow-lg group-hover:scale-105 transition-transform">
+                            <img src="parentdj/app_icon.png" alt="ParentDJ App Icon" width="64" height="64" class="w-16 h-16 object-cover rounded-2xl border border-zinc-700 shadow-lg group-hover:scale-105 transition-transform">
                             <div>
                                 <span class="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 bg-amber-500/10 text-amber-400 rounded-full border border-amber-500/20 inline-block mb-1">iOS & Android</span>
                                 <h3 class="text-lg font-bold text-zinc-100 group-hover:text-amber-300 transition-colors">
