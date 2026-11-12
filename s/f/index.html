@@ -5,28 +5,36 @@
   <title>Redirecting...</title>
   <script>
     (function() {
-      // 1. Define your target destination URL
-      const targetBaseUrl = "https://soaringeagle.app";
-
-      // 2. Grab current URL query parameters (if any were passed in)
       const currentParams = new URLSearchParams(window.location.search);
+      let targetBaseUrl = "https://soaringeagle.app/";
+      
+      const appParam = currentParams.get("app") || currentParams.get("target");
+      if (appParam) {
+        const val = appParam.toLowerCase();
+        if (val.includes("layer") || val.includes("ll") || val.includes("live")) {
+          targetBaseUrl = "https://soaringeagle.app/layerlenslive/";
+        } else if (val.includes("parent") || val.includes("dj")) {
+          targetBaseUrl = "https://soaringeagle.app/parentdj/";
+        }
+      }
 
-      // 3. Define the default/desired UTM parameters you want to inject or ensure
       const defaultUtms = {
         utm_source: "Facebook",
         utm_medium: "redirect",
         utm_campaign: ""
       };
 
-      // 4. Merge existing params with defaults (existing params override defaults)
       for (const [key, value] of Object.entries(defaultUtms)) {
         if (!currentParams.has(key)) {
           currentParams.set(key, value);
         }
       }
 
-      // 5. Build final URL and redirect
-      const finalUrl = `${targetBaseUrl}?${currentParams.toString()}`;
+      currentParams.delete("app");
+      currentParams.delete("target");
+
+      const qs = currentParams.toString();
+      const finalUrl = qs ? targetBaseUrl + "?" + qs : targetBaseUrl;
       window.location.replace(finalUrl);
     })();
   </script>
