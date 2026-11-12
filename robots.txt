@@ -1,4 +1,9 @@
 User-agent: *
 Allow: /
+Disallow: /baseball/
+Disallow: /bowling/
+Disallow: /cornhole/
+Disallow: /oauth/
+Disallow: /s/
 
 Sitemap: https://soaringeagle.app/sitemap.xml
