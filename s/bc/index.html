@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Redirecting...</title>
+  <script>
+    (function() {
+      const currentParams = new URLSearchParams(window.location.search);
+      let targetBaseUrl = "https://soaringeagle.app/";
+      
+      const appParam = currentParams.get("app") || currentParams.get("target");
+      if (appParam) {
+        const val = appParam.toLowerCase();
+        if (val.includes("layer") || val.includes("ll") || val.includes("live")) {
+          targetBaseUrl = "https://soaringeagle.app/layerlenslive/";
+        } else if (val.includes("parent") || val.includes("dj")) {
+          targetBaseUrl = "https://soaringeagle.app/parentdj/";
+        }
+      }
+
+      const defaultUtms = {
+        utm_source: "BusinessCard",
+        utm_medium: "redirect",
+        utm_campaign: ""
+      };
+
+      for (const [key, value] of Object.entries(defaultUtms)) {
+        if (!currentParams.has(key)) {
+          currentParams.set(key, value);
+        }
+      }
+
+      currentParams.delete("app");
+      currentParams.delete("target");
+
+      const qs = currentParams.toString();
+      const finalUrl = qs ? targetBaseUrl + "?" + qs : targetBaseUrl;
+      window.location.replace(finalUrl);
+    })();
+  </script>
+</head>
+<body>
+  <p>If you are not redirected automatically, please <a id="fallback-link" href="#">click here</a>.</p>
+  <script>
+    document.getElementById("fallback-link").href = window.location.href;
+  </script>
+</body>
+</html>
